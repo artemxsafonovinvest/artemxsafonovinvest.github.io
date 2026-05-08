@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор пассивного дохода | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--blue:#2251a3;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--border:rgba(34,81,163,0.15);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 15% 15%,rgba(34,81,163,.05) 0%,transparent 50%),radial-gradient(circle at 85% 85%,rgba(201,168,76,.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+.container{max-width:820px;margin:0 auto;padding:36px 20px 80px;position:relative;z-index:1;}
+.header{text-align:center;margin-bottom:36px;}
+.advisor-block{display:inline-flex;flex-direction:column;align-items:center;background:var(--navy);padding:12px 28px;border-radius:14px;margin-bottom:20px;gap:3px;}
+.advisor-name{font-family:"Playfair Display",serif;font-size:22px;font-weight:700;color:var(--gold-light);}
+.advisor-title{font-size:11px;color:rgba(232,201,122,.8);}
+h1{font-family:"Playfair Display",serif;font-size:clamp(24px,4vw,36px);font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:10px;}
+h1 span{color:var(--gold);}
+.header-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+.tab{flex:1;min-width:140px;padding:11px 14px;border-radius:10px;border:2px solid var(--border);background:white;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--navy);color:white;border-color:var(--navy);}
+.tab:hover:not(.active){border-color:var(--blue);color:var(--blue);}
+.panel{display:none;}
+.panel.active{display:block;}
+.card{background:white;border-radius:18px;padding:28px;box-shadow:0 4px 20px rgba(15,31,61,.07);border:1px solid var(--border);margin-bottom:18px;}
+.card-title{font-family:"Playfair Display",serif;font-size:18px;font-weight:600;color:var(--navy);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.sg{margin-bottom:20px;}
+.sl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.sl-text{font-size:13px;font-weight:500;color:var(--text);}
+.sl-val{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--blue);}
+.sl-unit{font-size:12px;color:var(--muted);margin-left:3px;}
+input[type=range]{width:100%;height:6px;border-radius:6px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,var(--blue) 0%,var(--blue) var(--pct,50%),rgba(34,81,163,.15) var(--pct,50%),rgba(34,81,163,.15) 100%);}
+input[type=range].green{background:linear-gradient(to right,#059669 0%,#059669 var(--pct,50%),rgba(5,150,105,.15) var(--pct,50%),rgba(5,150,105,.15) 100%);}
+input[type=range].gold{background:linear-gradient(to right,#c9a84c 0%,#c9a84c var(--pct,50%),rgba(201,168,76,.15) var(--pct,50%),rgba(201,168,76,.15) 100%);}
+input[type=range].red{background:linear-gradient(to right,#dc2626 0%,#dc2626 var(--pct,50%),rgba(220,38,38,.15) var(--pct,50%),rgba(220,38,38,.15) 100%);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:white;border:3px solid var(--blue);box-shadow:0 2px 8px rgba(34,81,163,.3);transition:transform .1s;}
+input[type=range].green::-webkit-slider-thumb{border-color:#059669;}
+input[type=range].gold::-webkit-slider-thumb{border-color:#c9a84c;}
+input[type=range].red::-webkit-slider-thumb{border-color:#dc2626;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
+.sl-mm{display:flex;justify-content:space-between;margin-top:5px;}
+.sl-mm span{font-size:10px;color:var(--muted);}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px;}
+.rb{background:var(--cream);border-radius:12px;padding:18px;border:1px solid var(--border);text-align:center;}
+.rb.hl{background:var(--navy);border-color:var(--navy);}
+.rb .rl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.rb.hl .rl{color:rgba(232,201,122,.7);}
+.rb .rv{font-family:"Playfair Display",serif;font-size:clamp(18px,2.5vw,26px);font-weight:700;color:var(--navy);line-height:1.1;}
+.rb.hl .rv{color:var(--gold-light);}
+.rb .rs{font-size:10px;color:var(--muted);margin-top:3px;}
+.rb.hl .rs{color:rgba(232,201,122,.6);}
+.nb{background:linear-gradient(135deg,rgba(34,81,163,.06),rgba(201,168,76,.06));border-radius:10px;padding:14px 18px;margin-top:14px;border-left:3px solid var(--gold);font-size:12px;color:var(--text);line-height:1.6;}
+.nb strong{color:var(--navy);}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.inf-box{background:linear-gradient(135deg,#fff7ed,#fef3c7);border:2px solid #f59e0b;border-radius:14px;padding:18px;margin-top:14px;}
+.inf-title{font-family:"Playfair Display",serif;font-size:16px;font-weight:700;color:#78350f;margin-bottom:12px;}
+.inf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.inf-item{background:white;border-radius:8px;padding:10px 12px;text-align:center;}
+.inf-label{font-size:10px;color:#92400e;margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.inf-val{font-family:"Playfair Display",serif;font-size:18px;font-weight:700;}
+.rule4-box{background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:2px solid #10b981;border-radius:14px;padding:20px;margin-bottom:16px;}
+.rule4-title{font-family:"Playfair Display",serif;font-size:18px;font-weight:700;color:#064e3b;margin-bottom:6px;}
+.rule4-sub{font-size:12px;color:#065f46;line-height:1.6;margin-bottom:14px;}
+.chart-area{background:white;border-radius:12px;padding:16px;border:1px solid var(--border);margin-top:14px;}
+.chart-title{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:10px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bar-label{font-size:11px;color:var(--muted);width:50px;text-align:right;flex-shrink:0;}
+.bar-track{flex:1;height:22px;background:rgba(34,81,163,.08);border-radius:6px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.bar-fill span{font-size:10px;font-weight:700;color:white;white-space:nowrap;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;}
+.tbl th{background:var(--navy);color:white;padding:8px 10px;text-align:center;font-size:10px;letter-spacing:.5px;}
+.tbl th:first-child{text-align:left;border-radius:8px 0 0 0;}
+.tbl th:last-child{border-radius:0 8px 0 0;}
+.tbl td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);}
+.tbl td:first-child{text-align:left;font-weight:600;color:var(--navy);}
+.tbl tr:nth-child(even) td{background:rgba(34,81,163,.03);}
+.tbl tr.hl-row td{background:rgba(201,168,76,.12);font-weight:700;}
+.tbl tr.hl-row td:first-child{color:var(--gold);}
+.cta{background:linear-gradient(135deg,var(--navy),#2d3748);border-radius:14px;padding:22px;color:white;text-align:center;margin-top:20px;}
+.cta h3{font-family:"Playfair Display",serif;font-size:17px;margin-bottom:6px;}
+.cta p{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:14px;}
+.cta a{display:inline-block;background:var(--gold);color:var(--navy);padding:10px 24px;border-radius:20px;text-decoration:none;font-weight:700;font-size:13px;}
+.cta .dis{font-size:10px;color:rgba(255,255,255,.4);margin-top:10px;}
+@media(max-width:560px){.rg,.inf-grid{grid-template-columns:1fr;}.card{padding:18px 14px;}.tabs{flex-direction:column;}}
+</style>
+</head>
+<body>
+<div style="background:#F5F0E8;padding:32px 24px 20px;text-align:center;border-bottom:2px solid #E2DDD5;">
+  <div style="display:inline-block;background:#1A2B3C;border-radius:12px;padding:12px 32px;margin-bottom:18px;">
+    <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#C8972A;">Артём Сафонов</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px;">Независимый финансовый советник</div>
+  </div>
+  <div style="font-family:Georgia,serif;font-size:32px;font-weight:900;color:#1A2B3C;line-height:1.15;">
+    Калькулятор <span style="color:#C8972A;font-style:italic;">пассивного дохода</span>
+  </div>
+  <div style="font-size:12px;color:#8B8070;margin-top:5px;">Сколько нужно накопить — и как работает правило 4%</div>
+</div>
+
+<div class="container">
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('capital')">💰 Капитал для цели</button>
+  <button class="tab" onclick="switchTab('rule4')">📐 Правило 4%</button>
+  <button class="tab" onclick="switchTab('compound')">📈 Сложный процент</button>
+  <button class="tab" onclick="switchTab('table')">📊 Таблица</button>
+</div>
+
+<!-- PANEL 1: CAPITAL -->
+<div class="panel active" id="panel-capital">
+  <div class="card">
+    <div class="card-title"><span>🎯</span> Сколько нужно капитала</div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Желаемый пассивный доход</span><span><span class="sl-val" id="v-income">50 000</span><span class="sl-unit">руб/мес</span></span></div>
+      <input type="range" id="sl-income" min="10000" max="1000000" step="5000" value="50000" oninput="calcCapital()">
+      <div class="sl-mm"><span>10 000</span><span>1 000 000 руб</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Ожидаемая доходность портфеля</span><span><span class="sl-val green" id="v-yield">10</span><span class="sl-unit">% год</span></span></div>
+      <input type="range" id="sl-yield" class="green" min="5" max="30" step="1" value="10" oninput="calcCapital()">
+      <div class="sl-mm"><span>5%</span><span>30%</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Уже есть накоплений</span><span><span class="sl-val" id="v-have">0</span><span class="sl-unit">руб</span></span></div>
+      <input type="range" id="sl-have" min="0" max="10000000" step="100000" value="0" oninput="calcCapital()">
+      <div class="sl-mm"><span>0</span><span>10 млн руб</span></div>
+    </div>
+    <div class="rg" id="cap-results"></div>
+
+    <div class="divider"></div>
+    <div class="card-title" style="font-size:16px;margin-bottom:16px;"><span>⏱️</span> Сколько откладывать в месяц</div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Горизонт инвестирования</span><span><span class="sl-val" id="v-years">10</span><span class="sl-unit">лет</span></span></div>
+      <input type="range" id="sl-years" min="1" max="30" step="1" value="10" oninput="calcCapital()">
+      <div class="sl-mm"><span>1 год</span><span>30 лет</span></div>
+    </div>
+    <div class="rg" id="monthly-results"></div>
+
+    <!-- INFLATION BLOCK -->
+    <div class="inf-box" style="margin-top:18px;">
+      <div class="inf-title">🔥 Поправка на инфляцию</div>
+      <div style="font-size:12px;color:#92400e;margin-bottom:14px;line-height:1.6;">
+        Через сколько лет ваш капитал будет стоить меньше?
+      </div>
+      <div class="sg">
+        <div class="sl-row"><span class="sl-text" style="color:#78350f;">Годовая инфляция</span><span><span class="sl-val red" id="v-inf">7</span><span class="sl-unit" style="color:#92400e;">% год</span></span></div>
+        <input type="range" id="sl-inf" class="red" min="1" max="20" step="0.5" value="7" oninput="calcCapital()">
+        <div class="sl-mm"><span>1%</span><span>20%</span></div>
+      </div>
+      <div class="inf-grid" id="inf-results"></div>
+      <div id="inf-note" style="margin-top:12px;font-size:12px;color:#78350f;line-height:1.6;background:rgba(255,255,255,.6);border-radius:8px;padding:10px 12px;"></div>
+    </div>
+
+    <div id="cap-note" class="nb" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- PANEL 2: RULE 4% -->
+<div class="panel" id="panel-rule4">
+  <div class="card">
+    <div class="rule4-box">
+      <div class="rule4-title">📐 Правило 4%</div>
+      <div class="rule4-sub">
+        Если тратить не больше <strong>4% от капитала в год</strong> — деньги практически не заканчиваются. Портфель растёт и покрывает расходы.<br>
+        Работает только когда капитал <strong>инвестирован</strong> — не лежит на счёте, а работает.
+      </div>
+    </div>
+
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Начальный капитал</span><span><span class="sl-val" id="v-r4cap">6 000 000</span><span class="sl-unit">руб</span></span></div>
+      <input type="range" id="sl-r4cap" min="500000" max="50000000" step="500000" value="6000000" oninput="calcRule4()">
+      <div class="sl-mm"><span>500 тыс</span><span>50 млн</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Доходность портфеля</span><span><span class="sl-val green" id="v-r4ret">10</span><span class="sl-unit">% год</span></span></div>
+      <input type="range" id="sl-r4ret" class="green" min="5" max="25" step="0.5" value="10" oninput="calcRule4()">
+      <div class="sl-mm"><span>5%</span><span>25%</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Процент снятия в год</span><span><span class="sl-val gold" id="v-r4wd">4</span><span class="sl-unit">% год</span></span></div>
+      <input type="range" id="sl-r4wd" class="gold" min="1" max="10" step="0.5" value="4" oninput="calcRule4()">
+      <div class="sl-mm"><span>1% (консервативно)</span><span>10% (агрессивно)</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Инфляция</span><span><span class="sl-val red" id="v-r4inf">7</span><span class="sl-unit">% год</span></span></div>
+      <input type="range" id="sl-r4inf" class="red" min="1" max="20" step="0.5" value="7" oninput="calcRule4()">
+      <div class="sl-mm"><span>1%</span><span>20%</span></div>
+    </div>
+
+    <div class="rg" id="r4-results"></div>
+
+    <div class="chart-area" style="margin-top:16px;">
+      <div class="chart-title">📊 Рост капитала по годам (при снятии <span id="r4-wd-pct">4</span>%)</div>
+      <div id="r4-bars"></div>
+    </div>
+
+    <div class="tbl-wrap" style="margin-top:16px;overflow-x:auto;">
+      <table class="tbl" id="r4-table"></table>
+    </div>
+
+    <div id="r4-note" class="nb" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- PANEL 3: COMPOUND -->
+<div class="panel" id="panel-compound">
+  <div class="card">
+    <div class="card-title"><span>🚀</span> Два сценария: сегодня vs через год</div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Ежемесячный взнос</span><span><span class="sl-val" id="v-monthly">15 000</span><span class="sl-unit">руб/мес</span></span></div>
+      <input type="range" id="sl-monthly" min="1000" max="100000" step="1000" value="15000" oninput="calcCompound()">
+      <div class="sl-mm"><span>1 000</span><span>100 000 руб</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Доходность портфеля</span><span><span class="sl-val green" id="v-cy">10</span><span class="sl-unit">% год</span></span></div>
+      <input type="range" id="sl-cy" class="green" min="5" max="30" step="1" value="10" oninput="calcCompound()">
+      <div class="sl-mm"><span>5%</span><span>30%</span></div>
+    </div>
+    <div class="sg">
+      <div class="sl-row"><span class="sl-text">Горизонт инвестирования</span><span><span class="sl-val" id="v-cyr">15</span><span class="sl-unit">лет</span></span></div>
+      <input type="range" id="sl-cyr" min="3" max="30" step="1" value="15" oninput="calcCompound()">
+      <div class="sl-mm"><span>3 года</span><span>30 лет</span></div>
+    </div>
+    <div id="compound-scenarios"></div>
+    <div id="compound-bars" style="margin-top:16px;"></div>
+    <div id="compound-note" class="nb" style="margin-top:14px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>📅</span> Рост капитала по годам</div>
+    <div id="growth-table"></div>
+  </div>
+</div>
+
+<!-- PANEL 4: TABLE -->
+<div class="panel" id="panel-table">
+  <div class="card">
+    <div class="card-title"><span>📊</span> Капитал для пассивного дохода</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Формула: Капитал = Доход × 12 ÷ Доходность</p>
+    <div style="overflow-x:auto;"><table class="tbl" id="capital-table"></table></div>
+    <div class="nb" style="margin-top:14px;"><strong>Как читать:</strong> найдите желаемый доход слева и нужную доходность сверху. На пересечении — необходимый капитал.</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>💸</span> Сколько откладывать в месяц</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">При доходности 15% годовых</p>
+    <div style="overflow-x:auto;"><table class="tbl" id="monthly-table"></table></div>
+    <div class="nb" style="margin-top:14px;"><strong>Главный вывод:</strong> 10 лет vs 20 лет — разница в ежемесячном взносе в 3–4 раза. Время работает сильнее любого инструмента.</div>
+  </div>
+</div>
+
+<div class="cta">
+  <h3>🏛️ Хотите выстроить капитал системно?</h3>
+  <p>Заходите в закрытый клуб <strong style="color:var(--gold-light)">Архитектор капитала</strong> — разбираем инвестиции, крипту и семейный капитал вживую. Первый месяц бесплатно.</p>
+  <a href="https://t.me/+gZjDlPHTwEw0MTFi" target="_blank" style="font-size:15px;padding:12px 32px;">Войти в клуб бесплатно →</a>
+  <div class="dis">Еженедельные эфиры · База знаний · Артём всегда на связи</div>
+  <div class="dis">Артём Сафонов · Все расчёты примерные, не включают налоги и комиссии</div>
+</div>
+</div>
+
+<script>
+function fmt(n){if(n>=1000000)return(n/1000000).toFixed(2).replace(".00","")+" млн";if(n>=1000)return new Intl.NumberFormat("ru").format(Math.round(n));return Math.round(n)+""}
+function fmtR(n){return new Intl.NumberFormat("ru").format(Math.round(n))+" руб"}
+function pmt(r,n,pv,fv){const rm=r/12;if(rm===0)return(fv-pv)/n;return(fv-pv*Math.pow(1+rm,n))*rm/(Math.pow(1+rm,n)-1);}
+function fvCalc(r,n,m,pv){const rm=r/12;if(rm===0)return pv+m*n;return pv*Math.pow(1+rm,n)+m*(Math.pow(1+rm,n)-1)/rm;}
+function updTrack(el){const pct=((+el.value-+el.min)/(+el.max-+el.min)*100).toFixed(1);el.style.setProperty("--pct",pct+"%");}
+document.querySelectorAll("input[type=range]").forEach(el=>{el.addEventListener("input",()=>updTrack(el));updTrack(el);});
+
+function switchTab(id){
+  ["capital","rule4","compound","table"].forEach(t=>{
+    document.getElementById("panel-"+t).classList.toggle("active",t===id);
+  });
+  document.querySelectorAll(".tab").forEach((t,i)=>{
+    t.classList.toggle("active",["capital","rule4","compound","table"][i]===id);
+  });
+}
+
+function calcCapital(){
+  const income=+document.getElementById("sl-income").value;
+  const yld=+document.getElementById("sl-yield").value/100;
+  const have=+document.getElementById("sl-have").value;
+  const years=+document.getElementById("sl-years").value;
+  const inf=+document.getElementById("sl-inf").value/100;
+
+  document.getElementById("v-income").textContent=fmt(income);
+  document.getElementById("v-yield").textContent=document.getElementById("sl-yield").value;
+  document.getElementById("v-have").textContent=fmt(have);
+  document.getElementById("v-years").textContent=years;
+  document.getElementById("v-inf").textContent=document.getElementById("sl-inf").value;
+  ["sl-income","sl-yield","sl-have","sl-years","sl-inf"].forEach(id=>updTrack(document.getElementById(id)));
+
+  const needed=income*12/yld;
+  const toSave=Math.max(0,needed-have);
+  const monthly=toSave>0?pmt(yld,years*12,have,needed):0;
+  const totalInv=monthly*years*12+have;
+  const growth=needed-totalInv;
+
+  document.getElementById("cap-results").innerHTML=`
+    <div class="rb hl"><div class="rl">Нужен капитал</div><div class="rv">${fmt(needed)}</div><div class="rs">рублей сегодня</div></div>
+    <div class="rb"><div class="rl">${have>0?"Ещё нужно накопить":"Весь капитал"}</div><div class="rv">${fmt(Math.max(0,toSave))}</div><div class="rs">рублей</div></div>`;
+
+  document.getElementById("monthly-results").innerHTML=`
+    <div class="rb hl"><div class="rl">Откладывать в месяц</div><div class="rv">${fmt(Math.max(0,monthly))}</div><div class="rs">рублей</div></div>
+    <div class="rb"><div class="rl">Из них вложено</div><div class="rv">${fmt(Math.max(0,totalInv))}</div><div class="rs">работает сложный %</div></div>`;
+
+  // Inflation block
+  const needed5=needed*Math.pow(1+inf,5);
+  const needed10=needed*Math.pow(1+inf,10);
+  const needed20=needed*Math.pow(1+inf,20);
+  const neededY=needed*Math.pow(1+inf,years);
+
+  document.getElementById("inf-results").innerHTML=`
+    <div class="inf-item"><div class="inf-label">Через 5 лет</div><div class="inf-val" style="color:#d97706">${fmt(needed5)}</div><div style="font-size:10px;color:#92400e">руб</div></div>
+    <div class="inf-item"><div class="inf-label">Через 10 лет</div><div class="inf-val" style="color:#c05621">${fmt(needed10)}</div><div style="font-size:10px;color:#92400e">руб</div></div>
+    <div class="inf-item"><div class="inf-label">Через 20 лет</div><div class="inf-val" style="color:#b91c1c">${fmt(needed20)}</div><div style="font-size:10px;color:#92400e">руб</div></div>`;
+
+  const diff=neededY-needed;
+  const pctDiff=Math.round(diff/needed*100);
+  document.getElementById("inf-note").innerHTML=
+    `За <strong>${years} лет</strong> при инфляции <strong>${(inf*100).toFixed(1)}%</strong> капитал <strong>${fmtR(needed)}</strong> обесценится. Реально нужно накопить <strong>${fmtR(neededY)}</strong> — это на <strong>${fmtR(diff)} (+${pctDiff}%)</strong> больше.`;
+
+  const eff=needed>0?Math.round(growth/needed*100):0;
+  document.getElementById("cap-note").innerHTML=
+    `<strong>Итог:</strong> для пассивного дохода <strong>${fmtR(income)}/мес</strong> при доходности <strong>${(yld*100).toFixed(0)}%</strong> нужен капитал <strong>${fmtR(needed)}</strong>. За ${years} лет сложный процент принесёт дополнительно <strong>${fmtR(Math.max(0,growth))}</strong> — это <strong>${eff}%</strong> от итоговой суммы.`;
+}
+
+function calcRule4(){
+  const cap=+document.getElementById("sl-r4cap").value;
+  const ret=+document.getElementById("sl-r4ret").value/100;
+  const wd=+document.getElementById("sl-r4wd").value/100;
+  const inf=+document.getElementById("sl-r4inf").value/100;
+
+  document.getElementById("v-r4cap").textContent=fmt(cap);
+  document.getElementById("v-r4ret").textContent=document.getElementById("sl-r4ret").value;
+  document.getElementById("v-r4wd").textContent=document.getElementById("sl-r4wd").value;
+  document.getElementById("v-r4inf").textContent=document.getElementById("sl-r4inf").value;
+  document.getElementById("r4-wd-pct").textContent=document.getElementById("sl-r4wd").value;
+  ["sl-r4cap","sl-r4ret","sl-r4wd","sl-r4inf"].forEach(id=>updTrack(document.getElementById(id)));
+
+  const annualWd=cap*wd;
+  const monthlyIncome=annualWd/12;
+  const netGrowth=ret-wd;
+  const sustainable=ret>wd;
+
+  document.getElementById("r4-results").innerHTML=`
+    <div class="rb hl"><div class="rl">Пассивный доход</div><div class="rv">${fmt(monthlyIncome)}</div><div class="rs">руб/мес (${(wd*100).toFixed(1)}% в год)</div></div>
+    <div class="rb" style="${sustainable?"background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-color:#10b981":"background:linear-gradient(135deg,#fff5f5,#fed7d7);border-color:#e53e3e"}">
+      <div class="rl">${sustainable?"Капитал растёт":"Капитал тает"}</div>
+      <div class="rv" style="color:${sustainable?"#059669":"#dc2626"}">${sustainable?"✅ Устойчиво":"⚠️ Риск"}</div>
+      <div class="rs">${sustainable?"Доходность > снятия":"Снятие > доходности"}</div>
+    </div>`;
+
+  // Build chart data for 30 years
+  const years=[1,2,3,5,7,10,15,20,25,30];
+  let capNow=cap;
+  const capByYear={0:cap};
+  for(let y=1;y<=30;y++){
+    capNow=capNow*(1+ret)-capNow*wd;
+    capByYear[y]=Math.max(0,capNow);
+  }
+  const maxCap=Math.max(...Object.values(capByYear));
+
+  let barsHtml="";
+  years.forEach(y=>{
+    const c=capByYear[y]||0;
+    const pct=maxCap>0?Math.max(2,c/maxCap*100):2;
+    const color=c>=cap?"#059669":c>=cap*0.5?"#d97706":"#dc2626";
+    barsHtml+=`<div class="bar-row">
+      <div class="bar-label">${y} лет</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"><span>${fmt(c)}</span></div></div>
+    </div>`;
+  });
+  document.getElementById("r4-bars").innerHTML=barsHtml;
+
+  // Table
+  let tbl=`<thead><tr><th>Год</th><th>Капитал</th><th>Снятие/год</th><th>Доход/мес</th><th>Изменение</th></tr></thead><tbody>`;
+  [1,2,3,5,7,10,15,20,25,30].forEach(y=>{
+    const c=capByYear[y]||0;
+    const wdAmt=c*wd;
+    const mo=wdAmt/12;
+    const chg=c-cap;
+    const isHl=y===10||y===20;
+    tbl+=`<tr${isHl?" class=\"hl-row\"":""}>
+      <td>${y} ${y===1?"год":y<5?"года":"лет"}</td>
+      <td style="font-weight:700;color:${c>=cap?"#059669":c>=cap*0.5?"#d97706":"#dc2626"}">${fmt(c)}</td>
+      <td>${fmt(wdAmt)}</td>
+      <td style="font-weight:600">${fmt(mo)}</td>
+      <td style="color:${chg>=0?"#059669":"#dc2626"};font-weight:700">${chg>=0?"+":"-"}${fmt(Math.abs(chg))}</td>
+    </tr>`;
+  });
+  tbl+="</tbody>";
+  document.getElementById("r4-table").innerHTML=tbl;
+
+  const cap30=capByYear[30]||0;
+  const verdict=sustainable
+    ?"Капитал <strong>растёт</strong> — доходность превышает снятие. Деньги работают вечно."
+    :"Капитал <strong>уменьшается</strong> — снятие превышает доходность. Рекомендуется снизить % снятия.";
+  document.getElementById("r4-note").innerHTML=
+    `<strong>Правило 4%:</strong> при капитале <strong>${fmtR(cap)}</strong> и доходности <strong>${(ret*100).toFixed(1)}%</strong> — снятие <strong>${(wd*100).toFixed(1)}%</strong> даёт <strong>${fmtR(monthlyIncome)}/мес</strong>. Через 30 лет капитал: <strong>${fmtR(cap30)}</strong>. ${verdict}`;
+}
+
+function calcCompound(){
+  const monthly=+document.getElementById("sl-monthly").value;
+  const yld=+document.getElementById("sl-cy").value/100;
+  const years=+document.getElementById("sl-cyr").value;
+  document.getElementById("v-monthly").textContent=fmt(monthly);
+  document.getElementById("v-cy").textContent=document.getElementById("sl-cy").value;
+  document.getElementById("v-cyr").textContent=years;
+  ["sl-monthly","sl-cy","sl-cyr"].forEach(id=>updTrack(document.getElementById(id)));
+
+  const todayFV=fvCalc(yld,years*12,monthly,0);
+  const laterFV=fvCalc(yld,(years-1)*12,monthly,0);
+  const diff=todayFV-laterFV;
+  const invested=monthly*years*12;
+  const growth=todayFV-invested;
+  const pctG=Math.round(growth/invested*100);
+
+  document.getElementById("compound-scenarios").innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px;">
+      <div style="background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:2px solid #10b981;border-radius:14px;padding:18px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:10px;">Начать сегодня</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#064e3b;margin-bottom:4px;">Через ${years} лет</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,28px);font-weight:700;color:#059669;margin:8px 0 4px;">${fmt(todayFV)}</div>
+        <div style="font-size:11px;color:#065f46;">Вложено: ${fmt(invested)} руб<br>Доход: ${fmt(growth)} руб</div>
+        <div style="margin-top:10px;background:rgba(16,185,129,.1);color:#059669;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;">+${pctG}% сверх вложенного</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border:2px solid #f59e0b;border-radius:14px;padding:18px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:10px;">Начать через год</div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#78350f;margin-bottom:4px;">Через ${years} лет</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,28px);font-weight:700;color:#d97706;margin:8px 0 4px;">${fmt(laterFV)}</div>
+        <div style="font-size:11px;color:#92400e;">Вложено: ${fmt(monthly*(years-1)*12)} руб<br>Потеряно: ${fmt(diff)} руб</div>
+        <div style="margin-top:10px;background:rgba(245,158,11,.15);color:#d97706;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;">⚠️ Потеря ${fmt(diff)} руб</div>
+      </div>
+    </div>`;
+
+  document.getElementById("compound-bars").innerHTML=`
+    <div style="margin-top:4px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;"><span>Начать сегодня</span><span style="font-weight:600;color:#059669">${fmt(todayFV)} руб</span></div>
+      <div style="height:10px;background:rgba(34,81,163,.1);border-radius:10px;overflow:hidden;margin-bottom:8px;"><div style="height:100%;border-radius:10px;background:linear-gradient(90deg,#10b981,#34d399);width:100%;"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;"><span>Начать через год</span><span style="font-weight:600;color:#d97706">${fmt(laterFV)} руб</span></div>
+      <div style="height:10px;background:rgba(34,81,163,.1);border-radius:10px;overflow:hidden;"><div style="height:100%;border-radius:10px;background:linear-gradient(90deg,#f59e0b,#fbbf24);width:${(laterFV/todayFV*100).toFixed(1)}%;"></div></div>
+    </div>`;
+
+  document.getElementById("compound-note").innerHTML=
+    `<strong>Цена одного года промедления:</strong> откладывая <strong>${fmtR(monthly)}/мес</strong> при доходности <strong>${(yld*100).toFixed(0)}%</strong> — один потерянный год стоит <span style="color:#dc2626;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;display:inline-block;margin:2px 0;">${fmtR(diff)}</span>. Это в ${(diff/monthly/12).toFixed(1)} раз больше годового взноса.`;
+
+  const milestones=[1,2,3,5,7,10,15,20,25,30].filter(y=>y<=years);
+  if(!milestones.includes(years))milestones.push(years);
+  milestones.sort((a,b)=>a-b);
+  let rows=`<table class="tbl"><thead><tr><th>Год</th><th style="background:#1a4a2e">Вложено (сегодня)</th><th style="background:#1a4a2e">Капитал</th><th style="background:#7a4a00">Вложено (через год)</th><th style="background:#7a4a00">Капитал</th><th>Разница</th></tr></thead><tbody>`;
+  milestones.forEach(y=>{
+    const t=fvCalc(yld,y*12,monthly,0);
+    const l=y>1?fvCalc(yld,(y-1)*12,monthly,0):0;
+    const inv=monthly*y*12;
+    const invL=monthly*Math.max(0,y-1)*12;
+    const d=t-l;
+    const isLast=y===years;
+    rows+=`<tr${isLast?" class=\"hl-row\"":""}>
+      <td>${y} ${y===1?"год":y<5?"года":"лет"}</td>
+      <td style="background:rgba(16,185,129,.06)">${fmt(inv)}</td>
+      <td style="background:rgba(16,185,129,.06);font-weight:600;color:#059669">${fmt(t)}</td>
+      <td style="background:rgba(245,158,11,.06)">${fmt(invL)}</td>
+      <td style="background:rgba(245,158,11,.06);font-weight:600;color:#d97706">${fmt(l)}</td>
+      <td style="color:${isLast?"var(--gold)":"var(--red)"};font-weight:700">−${fmt(d)}</td>
+    </tr>`;
+  });
+  rows+="</tbody></table>";
+  document.getElementById("growth-table").innerHTML=rows;
+}
+
+function buildTables(){
+  const incomes=[20000,30000,50000,80000,100000,150000,200000,300000,500000,1000000];
+  const yields=[6,8,10,12,15,20,25,30];
+  let h=`<thead><tr><th>Доход/мес</th>`;
+  yields.forEach(y=>h+=`<th>${y}%</th>`);
+  h+=`</tr></thead><tbody>`;
+  incomes.forEach(inc=>{
+    const isBig=inc>=150000;
+    h+=`<tr${isBig?" class=\"hl-row\"":""}><td>${fmt(inc)} руб</td>`;
+    yields.forEach(y=>{h+=`<td>${fmt(inc*12/(y/100))}</td>`;});
+    h+=`</tr>`;
+  });
+  h+=`</tbody>`;
+  document.getElementById("capital-table").innerHTML=h;
+
+  const capLabels=["30 000/мес","50 000/мес","80 000/мес","100 000/мес","150 000/мес","200 000/мес","500 000/мес","1 000 000/мес"];
+  const caps=[360000,600000,960000,1200000,1800000,2400000,6000000,12000000];
+  const horizons=[5,7,10,15,20,25,30];
+  const rate=0.15;
+  let h2=`<thead><tr><th>Цель</th>`;
+  horizons.forEach(h=>h2+=`<th>${h} лет</th>`);
+  h2+=`</tr></thead><tbody>`;
+  caps.forEach((cap,idx)=>{
+    const isBig=idx>=6;
+    h2+=`<tr${isBig?" class=\"hl-row\"":""}><td>${capLabels[idx]}</td>`;
+    horizons.forEach(h=>{
+      const m=pmt(rate,h*12,0,cap);
+      h2+=`<td style="${m<50000?"color:var(--green);font-weight:600":""}">${fmt(m)}</td>`;
+    });
+    h2+=`</tr>`;
+  });
+  h2+=`</tbody>`;
+  document.getElementById("monthly-table").innerHTML=h2;
+}
+
+calcCapital();
+calcRule4();
+calcCompound();
+buildTables();
+</script>
+</body>
+</html>
