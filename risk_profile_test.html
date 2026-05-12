@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Риск-профиль инвестора | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1f3d;
+    --navy-mid: #1a3260;
+    --blue: #2251a3;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f8f5ef;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: rgba(34,81,163,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG Pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(34,81,163,0.06) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(201,168,76,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .advisor-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: var(--navy);
+    color: var(--gold-light);
+    padding: 12px 24px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+  }
+
+  .advisor-badge-name {
+    font-size: 26px;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.5px;
+    color: var(--gold-light);
+  }
+
+  .advisor-badge-title {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: rgba(232,201,122,0.85);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  h1 span { color: var(--gold); }
+
+  .header-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    margin-bottom: 36px;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .progress-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: rgba(34,81,163,0.12);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 36px;
+    box-shadow: 0 4px 24px rgba(15,31,61,0.08), 0 1px 4px rgba(15,31,61,0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(17px, 3vw, 22px);
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+
+  .q-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: -18px;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(34,81,163,0.05), rgba(201,168,76,0.05));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .option:hover {
+    border-color: var(--blue);
+    transform: translateX(4px);
+    background: white;
+  }
+
+  .option:hover::before { opacity: 1; }
+
+  .option.selected {
+    border-color: var(--blue);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(34,81,163,0.08);
+  }
+
+  .option.selected::before { opacity: 1; }
+
+  .option-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(34,81,163,0.3);
+    flex-shrink: 0;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .option.selected .option-dot {
+    border-color: var(--blue);
+    background: var(--blue);
+  }
+
+  .option.selected .option-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 7px; height: 7px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  .option-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .option.selected .option-text { font-weight: 500; color: var(--navy); }
+
+  .option-score {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    background: rgba(34,81,163,0.06);
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .option.selected .option-score {
+    background: rgba(34,81,163,0.12);
+    color: var(--blue);
+  }
+
+  /* NAV BUTTONS */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-back {
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+  }
+
+  .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+
+  .btn-next {
+    background: var(--navy);
+    color: white;
+    flex: 1;
+    max-width: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-next:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(34,81,163,0.25); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-next::after { content: '→'; font-size: 16px; }
+
+  /* RESULT */
+  .result-card {
+    display: none;
+    background: var(--white);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(15,31,61,0.12);
+    border: 1px solid var(--border);
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .result-header {
+    padding: 40px 36px 32px;
+    text-align: center;
+    position: relative;
+  }
+
+  .result-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .result-icon { font-size: 56px; margin-bottom: 16px; display: block; }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .result-subtitle {
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .result-body { padding: 0 36px 36px; }
+
+  .score-bar-wrap {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .score-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .score-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .score-track {
+    height: 8px;
+    background: rgba(34,81,163,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.3s;
+  }
+
+  .spectrum {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .spectrum span { font-size: 10px; color: var(--muted); font-weight: 500; }
+
+  .result-section { margin-bottom: 24px; }
+
+  .result-section h3 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .allocation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .alloc-item {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+
+  .alloc-name {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  .alloc-sub {
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.7;
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+
+  .alloc-pct {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .alloc-bar {
+    height: 3px;
+    border-radius: 3px;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  .chars-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .char-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .char-item::before {
+    content: '✓';
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .warnings-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .warn-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    background: var(--cream);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .cta-block {
+    background: var(--navy);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    color: white;
+    margin-top: 8px;
+  }
+
+  .cta-block p {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .cta-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+
+  .btn-restart {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+  }
+
+  .btn-restart:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  /* Conservative */
+  .profile-conservative .result-header { background: linear-gradient(135deg, #e8f0fe, #f0f4ff); }
+  .profile-conservative .result-badge { background: #dbeafe; color: #1e40af; }
+  .profile-conservative .result-title { color: #1e3a8a; }
+  .profile-conservative .result-subtitle { color: #374151; }
+  .profile-conservative .score-fill { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+  .profile-conservative .char-item::before { color: #3b82f6; }
+  .profile-conservative .alloc-pct { color: #1e40af; }
+
+  /* Moderate */
+  .profile-moderate .result-header { background: linear-gradient(135deg, #f0fdf4, #ecfdf5); }
+  .profile-moderate .result-badge { background: #d1fae5; color: #065f46; }
+  .profile-moderate .result-title { color: #064e3b; }
+  .profile-moderate .result-subtitle { color: #374151; }
+  .profile-moderate .score-fill { background: linear-gradient(90deg, #34d399, #10b981); }
+  .profile-moderate .char-item::before { color: #10b981; }
+  .profile-moderate .alloc-pct { color: #065f46; }
+
+  /* Aggressive */
+  .profile-aggressive .result-header { background: linear-gradient(135deg, #fdf4ff, #fef3c7); }
+  .profile-aggressive .result-badge { background: #fef3c7; color: #92400e; }
+  .profile-aggressive .result-title { color: #78350f; }
+  .profile-aggressive .result-subtitle { color: #374151; }
+  .profile-aggressive .score-fill { background: linear-gradient(90deg, var(--gold), #f59e0b); }
+  .profile-aggressive .char-item::before { color: var(--gold); }
+  .profile-aggressive .alloc-pct { color: #92400e; }
+
+  @media (max-width: 520px) {
+    .container { padding: 24px 16px 60px; }
+    .question-card { padding: 24px 20px; }
+    .result-header { padding: 28px 24px 24px; }
+    .result-body { padding: 0 24px 28px; }
+    .allocation-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+/* BLOCK PROGRESS */
+.block-progress-wrap { max-width:800px; margin:0 auto; padding:16px 24px 0; }
+#blockProgress { display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+.block-pill {
+  display:flex; align-items:center; gap:8px; padding:8px 16px;
+  border-radius:20px; border:2px solid rgba(26,43,60,0.15);
+  background:#fff; font-size:13px; font-weight:600; color:#6B7280; transition:all 0.2s;
+}
+.block-pill.active { background:#1A2B3C; color:#fff; border-color:#1A2B3C; }
+.block-pill.done { border-color:#10b981; color:#10b981; }
+.block-pill.done.active { background:#10b981; color:#fff; border-color:#10b981; }
+.block-count { font-size:11px; opacity:0.7; }
+.block-label-tag {
+  display:inline-block; padding:4px 14px; border-radius:20px;
+  font-size:12px; font-weight:700; color:#fff; margin-bottom:14px;
+}
+/* BLOCK SCORES */
+.block-scores { margin:20px 0 28px; }
+.bs-item { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.bs-label { font-size:13px; font-weight:600; color:#1A2B3C; width:140px; flex-shrink:0; }
+.bs-bar-wrap { flex:1; height:8px; background:rgba(26,43,60,0.1); border-radius:4px; overflow:hidden; }
+.bs-bar { height:100%; border-radius:4px; transition:width 1s ease; }
+.bs-pct { font-size:13px; font-weight:700; color:#1A2B3C; width:36px; text-align:right; }
+
+</style>
+<style id="uni-css">
+#uni-header{background:#F5F0E8;padding:40px 32px 28px;text-align:center;border-bottom:2px solid #E2DDD5;}
+.uni-badge{display:inline-block;background:#1A2B3C;border-radius:14px;padding:16px 36px;margin-bottom:24px;}
+.uni-name{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#C8972A;letter-spacing:.5px;}
+.uni-role{font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;letter-spacing:.5px;}
+.uni-title{font-family:Georgia,serif;font-size:38px;font-weight:900;color:#1A2B3C;line-height:1.15;}
+.uni-subtitle{font-size:13px;color:#8B8070;margin-top:8px;}
+#uni-footer{background:#1A2B3C;margin-top:40px;padding:32px;}
+.uni-footer-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;}
+.uni-qr{display:block;flex-shrink:0;border-radius:12px;overflow:hidden;border:4px solid #C8972A;text-decoration:none;}
+.uni-qr img{display:block;}
+.uni-tg-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C8972A;font-weight:700;margin-bottom:8px;}
+.uni-tg-title{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.2;}
+.uni-tg-sub{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px;line-height:1.6;}
+.uni-tg-btn{display:inline-flex;align-items:center;gap:8px;background:#C8972A;color:#fff;text-decoration:none;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;}
+.uni-tg-hint{margin-top:8px;font-size:11px;color:rgba(255,255,255,.4);}
+</style>
+</head>
+<body>
+<div id="uni-header" style="background:#F5F0E8;padding:40px 32px 28px;text-align:center;border-bottom:2px solid #E2DDD5;">
+  <div style="display:inline-block;background:#1A2B3C;border-radius:14px;padding:16px 36px;margin-bottom:24px;">
+    <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:#C8972A;">Артём Сафонов</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-top:4px;">Независимый финансовый советник</div>
+  </div>
+  <div style="font-family:Georgia,serif;font-size:38px;font-weight:900;color:#1A2B3C;line-height:1.15;">Тест <span style="color:#C8972A;font-style:italic;">риск-профиля</span></div>
+  <div style="font-size:13px;color:#8B8070;margin-top:8px;">16 вопросов · 3 блока · Персональный результат</div>
+</div>
+<div class="block-progress-wrap" id="blockProgressWrap">
+  <div id="blockProgress"></div>
+</div>
+<div class="container">
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-top">
+      <span class="progress-label">Прогресс</span>
+      <span class="progress-count" id="progressCount">1 из 16</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 8%"></div>
+    </div>
+  </div>
+
+  <div class="question-card" id="questionCard">
+    <div id="blockLabel" class="block-label-tag"></div>
+    <div class="q-number" id="qNumber">Вопрос 01</div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-hint" id="qHint"></div>
+    <div class="options" id="options"></div>
+  </div>
+
+  <div class="nav" id="nav">
+    <button class="btn btn-back" id="btnBack" onclick="prevQuestion()">← Назад</button>
+    <button class="btn btn-next" id="btnNext" onclick="nextQuestion()" disabled>Далее</button>
+  </div>
+
+  <div class="result-card" id="resultCard"></div>
+
+</div>
+
+<script>
+const BLOCKS = [
+  { id: 'situation', label: '👤 Ситуация',  color: '#1A2B3C' },
+  { id: 'behavior',  label: '🧠 Поведение', color: '#7C3AED' },
+  { id: 'goals',     label: '🎯 Цели',      color: '#C8972A' },
+];
+
+const questions = [
+  // БЛОК 1: СИТУАЦИЯ
+  { block:0, text:'К какой возрастной группе вы относитесь?', hint:'Возраст влияет на горизонт и допустимый риск',
+    options:[{text:'До 30 лет — впереди много времени',score:5},{text:'30–44 года — активная фаза накопления',score:4},{text:'45–54 года — баланс накопления и защиты',score:3},{text:'55–64 года — приближаюсь к пенсии',score:2},{text:'65 лет и старше',score:1}]},
+  { block:0, text:'Сколько человек финансово зависит от вас?', hint:'Иждивенцы: дети, родители, супруг(а) без дохода',
+    options:[{text:'Никого — финансово независим(а)',score:5},{text:'1 человек',score:4},{text:'2 человека',score:3},{text:'3–4 человека',score:2},{text:'5 и более человек',score:1}]},
+  { block:0, text:'Есть ли у вас резервный фонд на непредвиденные расходы?', hint:'Резерв — это подушка безопасности, не инвестиции',
+    options:[{text:'Нет — нет никакой подушки',score:1},{text:'Есть, но меньше 1 месяца расходов',score:2},{text:'Есть — 1–3 месяца расходов',score:3},{text:'Есть — 3–6 месяцев расходов',score:4},{text:'Есть — больше 6 месяцев расходов',score:5}]},
+  { block:0, text:'Как вы ожидаете изменение дохода в ближайшие 3 года?', hint:null,
+    options:[{text:'Снизится — нестабильная ситуация или планирую декрет',score:1},{text:'Могут быть значительные колебания',score:2},{text:'Останется примерно таким же',score:3},{text:'Вырастет — есть перспективы роста',score:4},{text:'Значительно вырастет',score:5}]},
+  { block:0, text:'Есть ли у вас значительные финансовые обязательства?', hint:'Ипотека, кредиты, регулярные крупные расходы',
+    options:[{text:'Да, большие — значительная часть дохода уходит на долги',score:1},{text:'Да, умеренные — справлюсь даже при просадке',score:3},{text:'Минимальные или нет',score:5}]},
+  { block:0, text:'Какой у вас опыт инвестирования?', hint:null,
+    options:[{text:'Нет опыта — только начинаю',score:1},{text:'Только вклады и накопительные счета',score:2},{text:'Есть опыт с облигациями и фондами',score:3},{text:'Регулярно инвестирую в акции и фонды',score:4},{text:'Продвинутый — работаю с разными инструментами',score:5}]},
+
+  // БЛОК 2: ПОВЕДЕНИЕ
+  { block:1, text:'Вы вложили 500 000 руб. Через месяц стало 350 000 руб. Что сделаете?', hint:'Нет правильного ответа — отвечайте честно',
+    options:[{text:'Немедленно продам всё — не готов(а) к таким потерям',score:1},{text:'Буду нервничать, но подожду восстановления',score:2},{text:'Спокойно подожду — понимаю что это временно',score:4},{text:'Докуплю — отличная возможность по низкой цене',score:5}]},
+  { block:1, text:'Рынок акций упал на 40% (как в кризис 2022 года). Ваша реакция?', hint:null,
+    options:[{text:'Паника — продам и выйду в кэш',score:1},{text:'Тревога — буду следить но постараюсь не продавать',score:2},{text:'Спокойно — понимаю что рынки восстанавливаются',score:4},{text:'Возможность — начну докупать на просадке',score:5}]},
+  { block:1, text:'Максимальное временное падение портфеля которое вы готовы выдержать:', hint:null,
+    options:[{text:'До 5% — любое большее падение выбьет из колеи',score:1},{text:'До 10–15%',score:2},{text:'До 20–30%',score:3},{text:'До 40–50% — понимаю что рынки восстанавливаются',score:4},{text:'Любое падение — инвестирую вдолгую',score:5}]},
+  { block:1, text:'Приемлемая просадка активов за один год:', hint:null,
+    options:[{text:'До 5% стоимости',score:1},{text:'5–10% стоимости',score:2},{text:'10–15% стоимости',score:3},{text:'Меня не волнует любое снижение — смотрю на долгосрочный результат',score:5}]},
+  { block:1, text:'Как вы относитесь к волатильности (колебаниям) рынка?', hint:null,
+    options:[{text:'Это меня пугает и вызывает стресс',score:1},{text:'Неприятно, но понимаю что это нормально',score:2},{text:'Нейтрально — это часть инвестирования',score:4},{text:'Воспринимаю как возможность — на волатильности зарабатывают',score:5}]},
+
+  // БЛОК 3: ЦЕЛИ
+  { block:2, text:'Какова основная цель ваших инвестиций?', hint:null,
+    options:[{text:'Гарантированное сохранение капитала',score:1},{text:'Защита сбережений от инфляции',score:2},{text:'Сохранить от инфляции и немного заработать',score:3},{text:'Накопить на конкретную цель (квартира, пенсия, дети)',score:4},{text:'Заработать как можно больше',score:5}]},
+  { block:2, text:'На какой горизонт вы инвестируете?', hint:'Горизонт — это когда вам понадобятся эти деньги',
+    options:[{text:'До 1 года — краткосрочная цель',score:1},{text:'1–3 года',score:2},{text:'3–7 лет',score:3},{text:'7–15 лет',score:4},{text:'Более 15 лет — долгосрочные накопления',score:5}]},
+  { block:2, text:'Какую доходность вы ожидаете от инвестиций?', hint:'При более высокой доходности — выше риск',
+    options:[{text:'5–8% годовых',score:2},{text:'9–15% годовых',score:3},{text:'15–25% годовых',score:5}]},
+  { block:2, text:'Что вы планируете делать с портфелем?', hint:null,
+    options:[{text:'Регулярно изымать — это источник дохода',score:1},{text:'Могу изымать при необходимости',score:2},{text:'Не изымаю, но и не пополняю регулярно',score:3},{text:'Буду регулярно пополнять небольшими суммами',score:4},{text:'Буду регулярно пополнять значительными суммами',score:5}]},
+  { block:2, text:'Два портфеля за 10 лет. Какой выберете?', hint:null,
+    options:[{text:'Портфель А: стабильно +6% в год, без просадок',score:1},{text:'Портфель Б: в среднем +10% в год, но бывали годы −15%',score:3},{text:'Портфель В: в среднем +18% в год, но бывали годы −40%',score:5}]},
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+function renderBlocks() {
+  const wrap = document.getElementById('blockProgress');
+  if (!wrap) return;
+  const currentBlock = questions[current] ? questions[current].block : -1;
+  wrap.innerHTML = BLOCKS.map((b, i) => {
+    const done = questions.filter((q,qi) => q.block===i && answers[qi]!==null).length;
+    const total = questions.filter(q => q.block===i).length;
+    const active = i===currentBlock;
+    const completed = done===total;
+    return `<div class="block-pill ${active?'active':''} ${completed?'done':''}">
+      <span>${b.label}</span><span class="block-count">${done}/${total}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const block = BLOCKS[q.block];
+  const bl = document.getElementById('blockLabel');
+  if (bl) { bl.textContent = block.label; bl.style.background = block.color; }
+
+  document.getElementById('qNumber').textContent = 'Вопрос ' + String(current+1).padStart(2,'0');
+  document.getElementById('qText').textContent = q.text;
+  const hint = document.getElementById('qHint');
+  hint.textContent = q.hint||''; hint.style.display = q.hint?'block':'none';
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option'+(answers[current]===i?' selected':'');
+    div.innerHTML = '<div class="option-dot"></div><div class="option-text">'+opt.text+'</div>';
+    div.onclick = ()=>selectOption(i);
+    opts.appendChild(div);
+  });
+
+  const pct = Math.round(((current+(answers[current]!==null?1:0))/questions.length)*100);
+  document.getElementById('progressFill').style.width = Math.max(4,pct)+'%';
+  document.getElementById('progressCount').textContent = (current+1)+' из '+questions.length;
+  document.getElementById('btnBack').style.display = current===0?'none':'block';
+  const btnNext = document.getElementById('btnNext');
+  btnNext.disabled = answers[current]===null;
+  btnNext.textContent = current===questions.length-1?'Узнать профиль →':'Далее →';
+  const card = document.getElementById('questionCard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='fadeUp 0.4s ease both';
+  renderBlocks();
+}
+
+function selectOption(i) {
+  answers[current]=i;
+  document.querySelectorAll('.option').forEach((el,idx)=>el.classList.toggle('selected',idx===i));
+  document.getElementById('btnNext').disabled=false;
+  document.getElementById('progressFill').style.width=Math.round(((current+1)/questions.length)*100)+'%';
+  renderBlocks();
+}
+
+function nextQuestion() {
+  if (answers[current]===null) return;
+  if (current<questions.length-1){current++;renderQuestion();}else{showResult();}
+}
+function prevQuestion(){if(current>0){current--;renderQuestion();}}
+
+function calcScore(){
+  let t=0; answers.forEach((a,i)=>{if(a!==null)t+=questions[i].options[a].score;}); return t;
+}
+function calcBlockScore(bi){
+  let s=0,m=0;
+  questions.forEach((q,i)=>{if(q.block===bi){m+=Math.max(...q.options.map(o=>o.score));if(answers[i]!==null)s+=questions[i].options[answers[i]].score;}});
+  return {score:s,max:m,pct:Math.round((s/m)*100)};
+}
+
+function showResult() {
+  const score=calcScore();
+  const maxScore=questions.reduce((s,q)=>s+Math.max(...q.options.map(o=>o.score)),0);
+  const pct=Math.round((score/maxScore)*100);
+  const bs=[0,1,2].map(calcBlockScore);
+
+  let profile;
+  if (pct<=38) {
+    profile={key:'conservative',icon:'🛡️',badge:'Консервативный профиль',title:'Консервативный инвестор',
+      subtitle:'Для вас главное — сохранить капитал. Вы предпочитаете предсказуемость высокой доходности. Мудрая позиция, особенно на старте.',
+      allocation:[{name:'Облигации / ОФЗ',sub:'стабильный доход',pct:50,color:'#3b82f6'},{name:'Вклады / кэш',sub:'ликвидность',pct:25,color:'#60a5fa'},{name:'Золото',sub:'защитный актив',pct:15,color:'#fcd34d'},{name:'Акции / фонды',sub:'индексные фонды',pct:10,color:'#93c5fd'}],
+      chars:['Стабильность важнее максимальной доходности','Готовы к просадкам не более 10–15%','Горизонт инвестирования до 3–5 лет','Важен быстрый доступ к средствам'],
+      warnings:['Ожидаемая доходность: 8–12% годовых','Вклады сейчас дают высокую ставку — хорошее время для консерваторов','Инфляция может съесть реальную доходность на длинном горизонте']};
+  } else if (pct<=65) {
+    profile={key:'moderate',icon:'⚖️',badge:'Умеренный профиль',title:'Умеренный инвестор',
+      subtitle:'Вы ищете баланс между ростом и стабильностью. Готовы принять умеренные колебания ради более высокой доходности. Оптимальная позиция для большинства.',
+      allocation:[{name:'Акции / фонды',sub:'индексные фонды, дивиденды',pct:40,color:'#10b981'},{name:'Облигации / вклады',sub:'стабильная часть',pct:40,color:'#34d399'},{name:'Золото',sub:'защитный актив',pct:15,color:'#fcd34d'},{name:'Крипта',sub:'до 5% — только для умеренных+',pct:5,color:'#a7f3d0'}],
+      chars:['Баланс между ростом и защитой капитала','Готовы к просадкам до 20–25%','Горизонт инвестирования 5–10 лет','Временные потери — часть пути'],
+      warnings:['Ожидаемая доходность: 12–18% годовых','Ребалансировка портфеля раз в год обязательна','Не продавайте в момент рыночной паники']};
+  } else {
+    profile={key:'aggressive',icon:'🚀',badge:'Агрессивный профиль',title:'Агрессивный инвестор',
+      subtitle:'Вы нацелены на максимальный рост и готовы к серьёзным колебаниям. Длинный горизонт и психологическая устойчивость — ваши главные преимущества.',
+      allocation:[{name:'Акции / фонды',sub:'индексные фонды, акции роста',pct:55,color:'#f59e0b'},{name:'Облигации / кэш',sub:'стабильная часть',pct:20,color:'#fbbf24'},{name:'Золото',sub:'защитный актив',pct:10,color:'#fcd34d'},{name:'Криптовалюта',sub:'BTC, ETH — высокий риск',pct:10,color:'#f97316'},{name:'Венчур / альтернативы',sub:'высочайший риск',pct:5,color:'#ef4444'}],
+      chars:['Максимальный рост капитала на длинном горизонте','Психологически готовы к просадкам 30–50%','Горизонт инвестирования 10+ лет','Коррекции — возможность докупить'],
+      warnings:['Ожидаемая доходность: 18–25% годовых (без гарантий)','Портфель может временно упасть на 40–60% — это нормально','Крипта: только 5–10% портфеля — огромная волатильность','Резервный фонд обязателен — не инвестируй деньги которые могут понадобиться']};
+  }
+
+  document.getElementById('progressWrap').style.display='none';
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('nav').style.display='none';
+  document.getElementById('blockProgressWrap').style.display='none';
+
+  const rc=document.getElementById('resultCard');
+  rc.style.display='block';
+  rc.className='result-card profile-'+profile.key;
+
+  rc.innerHTML=`
+    <div class="result-header">
+      <div class="result-badge">${profile.badge}</div>
+      <div class="result-icon">${profile.icon}</div>
+      <div class="result-title">${profile.title}</div>
+      <div class="result-subtitle">${profile.subtitle}</div>
+    </div>
+    <div class="result-body">
+      <div class="score-bar-wrap">
+        <div class="score-label"><span>Склонность к риску</span><span class="score-value">${pct}%</span></div>
+        <div class="score-track"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+        <div class="spectrum"><span>Консервативный</span><span>Умеренный</span><span>Агрессивный</span></div>
+      </div>
+      <div class="block-scores">
+        ${BLOCKS.map((b,i)=>`<div class="bs-item">
+          <div class="bs-label">${b.label}</div>
+          <div class="bs-bar-wrap"><div class="bs-bar" style="width:${bs[i].pct}%;background:${b.color}"></div></div>
+          <div class="bs-pct">${bs[i].pct}%</div>
+        </div>`).join('')}
+      </div>
+      <div class="result-section">
+        <h3>Рекомендованное распределение портфеля</h3>
+        <div class="allocation-grid">
+          ${profile.allocation.map(a=>`<div class="alloc-item">
+            <div class="alloc-name">${a.name}</div>
+            <div class="alloc-sub">${a.sub||''}</div>
+            <div class="alloc-pct">${a.pct}%</div>
+            <div class="alloc-bar" style="background:${a.color};width:${Math.min(a.pct*1.2,100)}%"></div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="result-section">
+        <h3>Характеристики вашего профиля</h3>
+        <ul class="char-list">${profile.chars.map(c=>`<li>${c}</li>`).join('')}</ul>
+      </div>
+      <div class="result-section warnings">
+        <h3>⚠️ Важно знать</h3>
+        <ul class="warn-list">${profile.warnings.map(w=>`<li>${w}</li>`).join('')}</ul>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:24px;padding:0 32px 32px;">
+      <button class="btn-restart" onclick="restart()">↺ Пройти тест заново</button>
+    </div>
+  `;
+  setTimeout(()=>{const f=document.getElementById('scoreFill');if(f)f.style.width=pct+'%';},100);
+}
+
+function restart(){
+  current=0; answers=new Array(questions.length).fill(null);
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('progressWrap').style.display='block';
+  document.getElementById('questionCard').style.display='block';
+  document.getElementById('nav').style.display='flex';
+  document.getElementById('blockProgressWrap').style.display='block';
+  renderQuestion();
+}
+
+// Init
+renderQuestion();
+</script>
+
+<div style="background:#1A2B3C;padding:32px;">
+  <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;">
+    <a href="https://t.me/+gZjDlPHTwEw0MTFi" target="_blank" style="display:block;flex-shrink:0;border-radius:12px;overflow:hidden;border:4px solid #C8972A;">
+      <img src="data:image/png;base64,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" width="130" height="130" style="display:block;"/>
+    </a>
+    <div style="color:#fff;flex:1;min-width:220px;">
+      
+      <div style="font-family:Georgia,serif;font-size:21px;font-weight:700;margin-bottom:8px;line-height:1.25;">Финансы без воды —<br>только практика</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px;line-height:1.6;">Советы по инвестициям, пассивному доходу и защите капитала. Подпишитесь — всё в одном канале.</div>
+      <a href="https://t.me/artemsafonov?start=risk" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#2251a3;color:#fff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:700;margin-bottom:10px;width:100%;justify-content:center;">
+        📩 Получить разбор от Артёма в Telegram
+      </a>
+      <a href="https://t.me/+gZjDlPHTwEw0MTFi" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#C8972A;color:#fff;text-decoration:none;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.03 9.553c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.697l-2.95-.924c-.641-.203-.654-.641.136-.953l11.527-4.443c.537-.194 1.006.131.369.871z"/></svg>
+        Подписаться на канал
+      </a>
+      <div style="margin-top:8px;font-size:11px;color:rgba(255,255,255,.4);">или отсканируйте QR-код</div>
+    </div>
+  </div>
+</div>
+<script type="text/babel">
+
+const { useState } = React;
+
+const ITEMS = [
+  { id:"reserve",   label:"Резервный фонд (3–6 мес расходов)", note:"Первый рубеж защиты. Накопительный счёт с мгновенным доступом.", sec:0, amtLabel:"Коплю/мес", perYear:false, hasIns:true, insLabel:"Банк" },
+  { id:"life",      label:"Страхование жизни (рисковое)",       note:"Выплата семье при смерти. Сумма = 3–5 годовых доходов.",         sec:0, amtLabel:"Взнос/мес",      perYear:false, hasIns:true },
+  { id:"accident",  label:"Страхование от НС и болезней",       note:"Выплата при травме, инвалидности, тяжёлой болезни.",            sec:0, amtLabel:"Взнос/мес",      perYear:false, hasIns:true },
+  { id:"income",    label:"Потеря дохода / нетрудоспособность", note:"Ежемесячные выплаты при нетрудоспособности. Важно для ИП.",     sec:0, amtLabel:"Взнос/мес",      perYear:false, hasIns:true },
+  { id:"dms",       label:"ДМС (добровольное мед. страхование)",note:"Лечение, анализы, специалисты. Лучше отдельный полис.",         sec:1, amtLabel:"Взнос/год",       perYear:true,  hasIns:true },
+  { id:"property",  label:"Страхование имущества",              note:"Пожар, затопление, кража.",                                     sec:1, amtLabel:"Взнос/год",       perYear:true,  hasIns:true },
+  { id:"kasko",     label:"Страхование авто (КАСКО)",           note:"Обязательно при кредите на авто.",                              sec:1, amtLabel:"Взнос/год",       perYear:true,  hasIns:true },
+  { id:"liability", label:"Гражданская ответственность",        note:"Ущерб третьим лицам. Авто, собаки, аренда.",                   sec:1, amtLabel:"Взнос/год",       perYear:true,  hasIns:true },
+  { id:"nsj",       label:"НСЖ (накопит. страхование жизни)",  note:"Не замена рисковому. Долгосрочный накопительный инструмент.",   sec:2, amtLabel:"Взнос/мес",      perYear:false, hasIns:true },
+  { id:"travel",    label:"Страхование путешествий",            note:"Медпомощь за рубежом, задержка рейса, потеря багажа.",          sec:2, amtLabel:"За поездку",      perYear:true,  hasIns:true },
+  { id:"card",      label:"Защита банковских карт",             note:"Защита от мошенничества.",                                      sec:2, amtLabel:"Взнос/год",       perYear:true,  hasIns:true },
+];
+const SECS = [
+  {label:"Критически важно",                   color:"#991B1B", emoji:"🔴"},
+  {label:"Важно — настоятельно рекомендуется", color:"#9A3412", emoji:"🟠"},
+  {label:"Желательно — по ситуации",           color:"#854D0E", emoji:"🟡"},
+];
+const fmt = n => Math.round(n).toLocaleString("ru-RU");
+const parseAmt = s => parseFloat((s||"").replace(/[\s\u00a0]/g,"").replace(",","."))||0;
+const fmtInput = s => { const n=s.replace(/\D/g,""); return n?parseInt(n).toLocaleString("ru-RU"):""; };
+
+function App() {
+  const [tab,setTab]         = useState(0);
+  const [states,setStates]   = useState({});
+  const [amts,setAmts]       = useState({});
+  const [ins,setIns]         = useState({});
+  const [expenses,setExp]    = useState({});
+  const [curResRaw,setCurRes]= useState("");
+  const [client,setClient]   = useState("");
+
+  const toggle  = id => setStates(s=>{const c=s[id]||"no";return{...s,[id]:c==="no"?"yes":c==="yes"?"none":"no"};});
+  const setAmt  = (id,v) => setAmts(a=>({...a,[id]:fmtInput(v)}));
+  const setIns_ = (id,v) => setIns(i=>({...i,[id]:v}));
+  const setE    = (id,v) => setExp(e=>({...e,[id]:fmtInput(v)}));
+
+  const checked = ITEMS.filter(it=>states[it.id]==="yes").length;
+  const filled  = ITEMS.filter(it=>states[it.id]==="yes"||states[it.id]==="none").length;
+  const pct     = Math.round(filled/ITEMS.length*100);
+
+  const [lvl,lvlC,lvlS] =
+    checked>=9?["✅ Хорошо защищён",  "#15803D","Продолжайте поддерживать"]:
+    checked>=6?["⚠️ Частичная защита","#C2530F","Есть пробелы — обсудите"] :
+    checked>=3?["⚠️ Слабая защита",   "#D97706","Критические риски открыты"]:
+               ["❌ Не защищён",       "#B91C1C","Срочно закрыть критичные"];
+
+  let totM=0; const insMap={};
+  ITEMS.forEach(it=>{
+    if(states[it.id]!=="yes")return;
+    const a=parseAmt(amts[it.id]||""); if(!a)return;
+    const mo=it.perYear?a/12:a; totM+=mo;
+    const nm=(ins[it.id]||"").trim()||it.label;
+    insMap[nm]=(insMap[nm]||0)+mo;
+  });
+
+  const expTot=["e1","e2","e3","e4","e5","e6","e7"].reduce((s,id)=>s+parseAmt(expenses[id]||""),0);
+  const curRes=parseAmt(curResRaw);
+  const n3=expTot*3,n6=expTot*6,n12=expTot*12;
+  const g3=n3-curRes,g6=n6-curRes;
+  const months=expTot>0?Math.round(curRes/expTot*10)/10:0;
+
+  const [rLvl,rC,rS]=
+    (!expTot&&!curRes)?["—","#6B7280","Заполните расходы и текущую сумму фонда"]:
+    curRes>=n6?["💪 Сильный","#15803D",`Оптимум достигнут — ${months} мес расходов`]:
+    curRes>=n3?["👍 Средний","#0E7490",`До оптимума (6 мес) не хватает ${fmt(g6)} руб`]:
+    curRes>0?  ["⚠️ Слабый", "#D97706",`До минимума (3 мес) не хватает ${fmt(g3)} руб`]:
+               ["❌ Нет фонда","#B91C1C","Нужно начать формировать"];
+
+  const sCnt=[0,1,2].map(s=>ITEMS.filter(it=>it.sec===s&&states[it.id]==="yes").length);
+  const BRD="#E2DDD5",GOLD="#A67C2A";
+  const l10={fontSize:10,letterSpacing:2,textTransform:"uppercase",color:GOLD,fontWeight:600,marginBottom:6};
+  const sr=(sz,c="#1A2B3C")=>({fontFamily:"Georgia,serif",fontSize:sz,fontWeight:700,color:c});
+  const card=(ex={})=>({background:"#fff",border:`1.5px solid ${BRD}`,borderRadius:10,padding:22,...ex});
+  const mi=(ex={})=>({background:"#fff",border:`1px solid ${BRD}`,borderRadius:4,padding:"4px 8px",fontFamily:"inherit",fontSize:12,width:"100%",outline:"none",...ex});
+
+  const stCfg={
+    no:  {e:"—",  lb:"Отметить",bg:"#F3F4F6",c:"#6B7280",br:"#D1D5DB"},
+    yes: {e:"✅", lb:"Есть",    bg:"#F0FDF4",c:"#15803D",br:"rgba(21,128,61,.4)"},
+    none:{e:"❌", lb:"Нет",     bg:"#FEF2F2",c:"#B91C1C",br:"rgba(185,28,28,.3)"},
+  };
+
+  const TabBtn=({i,lb})=>(
+    <button onClick={()=>setTab(i)} style={{
+      flex:1, padding:"12px 16px", borderRadius:12,
+      border: tab===i ? "2px solid #1A2B3C" : "2px solid rgba(26,43,60,0.15)",
+      background: tab===i ? "#1A2B3C" : "#fff",
+      fontFamily:"DM Sans,sans-serif", fontSize:14, fontWeight:600,
+      color: tab===i ? "#fff" : "#6B7280",
+      cursor:"pointer", transition:"all 0.2s", whiteSpace:"nowrap"
+    }}>
+      {lb}
+    </button>
+  );
+
+  return (
+    <div style={{background:"#F5F2ED",minHeight:"100vh",color:"#1A2B3C"}}>
+      <div style={{maxWidth:980,margin:"0 auto",padding:"24px 32px 0"}}>
+        <div style={{display:"flex",gap:8,marginBottom:28}}>
+          <TabBtn i={0} lb="🛡️ Чек-лист"/>
+          <TabBtn i={1} lb="💰 Резервный фонд"/>
+          <TabBtn i={2} lb="📋 Правила"/>
+        </div>
+      </div>
+      <div style={{maxWidth:980,margin:"0 auto",padding:"0 32px 60px"}}>
+
+        {tab===0&&(<div>
+          <div style={{marginBottom:20}}>
+            <div style={l10}>Имя клиента</div>
+            <input value={client} onChange={e=>setClient(e.target.value)} placeholder="Введите имя..."
+              style={{background:"#fff",border:`1.5px solid ${BRD}`,borderRadius:6,padding:"8px 12px",fontFamily:"inherit",fontSize:14,outline:"none",width:280}}/>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 150px 110px",gap:0,padding:"6px 14px",
+            background:"#EDE9E1",borderRadius:8,marginBottom:6,border:`1px solid ${BRD}`}}>
+            <div style={{fontSize:10,letterSpacing:1.5,textTransform:"uppercase",color:"#6B7280",fontWeight:600}}>Вид страхования</div>
+            <div style={{fontSize:10,letterSpacing:1.5,textTransform:"uppercase",color:"#6B7280",fontWeight:600,textAlign:"center"}}>Сумма / Банк / Страховая</div>
+            <div style={{fontSize:10,letterSpacing:1.5,textTransform:"uppercase",color:"#6B7280",fontWeight:600,textAlign:"center"}}>← Нажми</div>
+          </div>
+          {[0,1,2].map(si=>(
+            <div key={si}>
+              <div style={{display:"flex",alignItems:"center",gap:10,padding:"9px 14px",borderRadius:8,margin:"14px 0 4px",background:SECS[si].color}}>
+                <span>{SECS[si].emoji}</span>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:.8,color:"#fff",textTransform:"uppercase"}}>{SECS[si].label}</span>
+                <span style={{marginLeft:"auto",fontSize:11,color:"rgba(255,255,255,.85)",background:"rgba(0,0,0,.2)",padding:"2px 8px",borderRadius:20}}>{sCnt[si]} / {[4,4,3][si]}</span>
+              </div>
+              {ITEMS.filter(it=>it.sec===si).map(it=>{
+                const st=states[it.id]||"no", cfg=stCfg[st];
+                return(
+                  <div key={it.id} style={{background:st==="yes"?"#FAFFFE":st==="none"?"#FFF8F8":"#fff",
+                    border:`1.5px solid ${st==="yes"?"rgba(21,128,61,.35)":st==="none"?"rgba(185,28,28,.25)":BRD}`,
+                    borderRadius:8,marginBottom:4,display:"grid",gridTemplateColumns:"1fr 200px 110px",minHeight:58}}>
+                    <div style={{padding:"10px 14px"}}>
+                      <div style={{fontSize:13,fontWeight:500}}>{it.label}</div>
+                      <div style={{fontSize:11,color:"#9CA3AF",lineHeight:1.5,marginTop:2}}>{it.note}</div>
+                    </div>
+                    <div style={{borderLeft:`1px solid ${BRD}`,padding:"8px 10px",display:"flex",flexDirection:"column",gap:5,justifyContent:"center",background:"#FAF8F4"}}>
+                      {st!=="none"?(
+                        <>
+                          <div style={{display:"flex",alignItems:"center",gap:4}}>
+                            <span style={{fontSize:10,color:"#9CA3AF",whiteSpace:"nowrap",width:65,flexShrink:0}}>{it.amtLabel}:</span>
+                            <input value={amts[it.id]||""} onChange={e=>setAmt(it.id,e.target.value)} placeholder="0" style={mi({textAlign:"right",fontSize:11})}/>
+                          </div>
+                          {it.hasIns&&(
+                            <div style={{display:"flex",alignItems:"center",gap:4}}>
+                              <span style={{fontSize:10,color:"#9CA3AF",whiteSpace:"nowrap",width:65,flexShrink:0}}>{it.insLabel||"Страховая"}:</span>
+                              <input value={ins[it.id]||""} onChange={e=>setIns_(it.id,e.target.value)} placeholder="..." style={mi({fontSize:11})}/>
+                            </div>
+                          )}
+                        </>
+                      ):(
+                        <div style={{fontSize:11,color:"#B91C1C",fontStyle:"italic",textAlign:"center"}}>нет страховки</div>
+                      )}
+                    </div>
+                    <div style={{borderLeft:`1px solid ${BRD}`,display:"flex",alignItems:"center",justifyContent:"center",padding:6}}>
+                      <button onClick={()=>toggle(it.id)} style={{background:cfg.bg,border:`2px solid ${cfg.br}`,borderRadius:8,
+                        cursor:"pointer",width:"100%",padding:"8px 4px",display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
+                        <span style={{fontSize:20,lineHeight:1}}>{cfg.e}</span>
+                        <span style={{fontSize:10,fontWeight:700,color:cfg.c,fontFamily:"inherit"}}>{cfg.lb}</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+          <div style={{...card(),marginTop:22}}>
+            {client&&<div style={{paddingBottom:12,marginBottom:12,borderBottom:`1.5px solid ${BRD}`,display:"flex",alignItems:"center",gap:8}}>
+              <span style={{fontSize:11,color:"#9CA3AF"}}>Клиент:</span>
+              <span style={{fontSize:15,fontWeight:700,color:"#1A2B3C"}}>{client}</span>
+            </div>}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:18}}>
+              <div><div style={l10}>Закрыто защит</div><div style={sr(22,"#15803D")}>{checked} / {ITEMS.length}</div><div style={{fontSize:11,color:"#6B7280",marginTop:2}}>{pct}% чек-листа заполнено</div></div>
+              <div><div style={l10}>Взносы / мес</div><div style={sr(22,"#C2530F")}>{fmt(totM)} руб</div><div style={{fontSize:11,color:"#6B7280",marginTop:2}}>Стоимость защиты</div></div>
+              <div><div style={l10}>Уровень защиты</div><div style={sr(18,lvlC)}>{lvl}</div><div style={{fontSize:11,color:"#6B7280",marginTop:2}}>{lvlS}</div></div>
+            </div>
+          </div>
+          {Object.keys(insMap).length>0&&(
+            <div style={{...card(),marginTop:14}}>
+              <div style={l10}>📋 Страховые компании</div>
+              {Object.entries(insMap).map(([nm,a])=>(
+                <div key={nm} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:`1px solid ${BRD}`,fontSize:13}}>
+                  <span>{nm}</span><span style={{color:"#15803D",fontWeight:700}}>{fmt(a)} руб/мес</span>
+                </div>
+              ))}
+              <div style={{display:"flex",justifyContent:"space-between",padding:"10px 0 0",borderTop:`2px solid ${BRD}`,marginTop:4}}>
+                <span style={{fontWeight:700}}>Итого в месяц</span><span style={sr(18,"#15803D")}>{fmt(totM)} руб</span>
+              </div>
+            </div>
+          )}
+          <div style={{background:"#FEF9EC",border:"1.5px dashed rgba(166,124,42,.35)",borderRadius:10,padding:"13px 18px",marginTop:18,textAlign:"center",fontSize:13,color:GOLD}}>
+            📸 Сделайте скриншот и отправьте советнику в мессенджер
+          </div>
+        </div>)}
+
+        {tab===1&&(
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:22,marginTop:8}}>
+            <div style={card()}>
+              <div style={{...sr(15),marginBottom:16,paddingBottom:10,borderBottom:`1.5px solid ${BRD}`}}>💸 Обязательные расходы в месяц</div>
+              {[["e1","Аренда / ипотека"],["e2","Продукты и питание"],["e3","Транспорт"],
+                ["e4","Коммунальные услуги"],["e5","Связь и интернет"],["e6","Медицина и лекарства"],["e7","Другие обязательные"]].map(([id,lb])=>(
+                <div key={id} style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
+                  <span style={{fontSize:13,flex:1}}>{lb}</span>
+                  <input value={expenses[id]||""} onChange={e=>setE(id,e.target.value)} placeholder="0"
+                    style={{background:"#FAF8F4",border:`1.5px solid ${BRD}`,borderRadius:6,padding:"7px 11px",fontFamily:"inherit",fontSize:13,width:130,textAlign:"right",outline:"none"}}/>
+                </div>
+              ))}
+              <div style={{display:"flex",justifyContent:"space-between",borderTop:`1.5px solid ${BRD}`,paddingTop:10,marginTop:6}}>
+                <span style={{fontWeight:700}}>Итого расходов</span><span style={sr(18,GOLD)}>{fmt(expTot)} руб</span>
+              </div>
+              <div style={{marginTop:18,paddingTop:14,borderTop:`1.5px solid ${BRD}`}}>
+                <div style={{...l10,marginBottom:8}}>Текущий резервный фонд</div>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <span style={{fontSize:13,flex:1}}>Сколько сейчас накоплено</span>
+                  <input value={curResRaw} onChange={e=>setCurRes(fmtInput(e.target.value))} placeholder="0"
+                    style={{background:"#FAF8F4",border:"1.5px solid #C8972A",borderRadius:6,padding:"7px 11px",fontFamily:"inherit",fontSize:13,width:130,textAlign:"right",outline:"none"}}/>
+                </div>
+              </div>
+            </div>
+            <div style={card()}>
+              <div style={{...sr(15),marginBottom:16,paddingBottom:10,borderBottom:`1.5px solid ${BRD}`}}>🎯 Необходимый резервный фонд</div>
+              {[[3,"#15803D","#F0FDF4","rgba(21,128,61,.25)","Минимум — 3 месяца","Базовая подушка",g3,n3],
+                [6,"#0E7490","#ECFEFF","rgba(14,116,144,.3)","Оптимально — 6 мес","Рекомендуемый уровень",g6,n6],
+                [12,"#1D4ED8","#EFF6FF","rgba(29,78,216,.25)","Максимум — 12 мес","Для ИП и самозанятых",null,n12]
+              ].map(([m,c,bg,bc,lb,sb,gp,nd])=>(
+                <div key={m} style={{background:bg,border:`1.5px solid ${bc}`,borderRadius:8,padding:"12px 16px",marginBottom:9}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div><div style={{fontSize:12,fontWeight:600,color:c}}>{lb}</div><div style={{fontSize:11,color:"#6B7280"}}>{sb}</div></div>
+                    <div style={sr(18,c)}>{fmt(nd)} руб</div>
+                  </div>
+                  {curRes>0&&gp!==null&&(
+                    <div style={{marginTop:8,paddingTop:8,borderTop:`1px solid ${bc}`,display:"flex",justifyContent:"space-between",fontSize:12}}>
+                      <span style={{color:"#6B7280"}}>{gp>0?"Не хватает:":"Излишек:"}</span>
+                      <span style={{fontWeight:700,color:gp>0?"#B91C1C":"#15803D"}}>{gp>0?`− ${fmt(gp)} руб`:`+ ${fmt(Math.abs(gp))} руб`}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div style={{padding:"14px 16px",background:"#F9F7F4",border:`1.5px solid ${BRD}`,borderRadius:8}}>
+                <div style={l10}>Уровень резервного фонда</div>
+                <div style={sr(20,rC)}>{rLvl}</div>
+                <div style={{fontSize:11,color:"#6B7280",marginTop:3}}>{rS}</div>
+                {curRes>0&&expTot>0&&(<>
+                  <div style={{marginTop:10,background:"#E5E7EB",borderRadius:6,height:8,overflow:"hidden"}}>
+                    <div style={{height:"100%",borderRadius:6,transition:"width .4s",
+                      background:curRes>=n6?"#15803D":curRes>=n3?"#0E7490":"#D97706",
+                      width:`${Math.min(100,(curRes/n6)*100)}%`}}/>
+                  </div>
+                  <div style={{fontSize:10,color:"#9CA3AF",marginTop:4}}>{months} мес из 6 рекомендуемых</div>
+                </>)}
+              </div>
+              <div style={{marginTop:14,padding:13,background:"#FEF9EC",border:"1.5px dashed rgba(166,124,42,.35)",borderRadius:8,fontSize:12,color:"#6B7280",lineHeight:1.6}}>
+                💡 Накопительный счёт с мгновенным доступом. Не срочный вклад. Не инвестиции.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab===2&&(<div>
+          <div style={{...sr(21),margin:"6px 0 4px"}}>Правила личных финансов</div>
+          <div style={{fontSize:13,color:"#6B7280",marginBottom:22}}>Артём Сафонов · Независимый финансовый советник</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+            {[["#B91C1C","1️⃣ Сначала защита — потом инвестиции","Один незастрахованный риск может обнулить годы накоплений."],
+              ["#A67C2A","2️⃣ Резервный фонд — первый уровень","3–6 месяцев расходов. Без него любой кризис = долги."],
+              ["#C2530F","3️⃣ Не путайте НСЖ и рисковое","НСЖ — накопления. Рисковое — чистая защита жизни."],
+              ["#0E7490","4️⃣ Пересматривайте защиту раз в год","Ребёнок, квартира, смена работы — покрытие обновляется."],
+              ["#1D4ED8","5️⃣ Дорогие долги — гасить первыми","Ставка 25–50%+ это пожар. Погашение = лучшая инвестиция."],
+              ["#7C3AED","6️⃣ Математика потерь асимметрична","Потеря 50% требует роста 100%. Защита важнее роста."],
+            ].map(([c,h,p])=>(
+              <div key={h} style={{background:"#fff",border:`1.5px solid ${BRD}`,borderLeft:`4px solid ${c}`,borderRadius:"0 8px 8px 0",padding:15}}>
+                <div style={{fontSize:13,fontWeight:700,marginBottom:5}}>{h}</div>
+                <div style={{fontSize:12,color:"#6B7280",lineHeight:1.6}}>{p}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{...card(),marginTop:18}}>
+            <div style={{...sr(15),color:GOLD,marginBottom:11}}>Приоритет действий</div>
+            {[["#FEF2F2","1. Создать резервный фонд (хотя бы 1 мес расходов)"],
+              ["#FFF7ED","2. Оформить рисковое страхование жизни и от НС"],
+              ["#FEFCE8","3. Застраховать имущество и получить ДМС"],
+              ["#ECFEFF","4. Только после этого — инвестиции и рост капитала"]
+            ].map(([bg,t])=>(
+              <div key={t} style={{background:bg,padding:9,borderRadius:6,fontSize:13,marginBottom:7}}>{t}</div>
+            ))}
+          </div>
+        </div>)}
+
+      </div>
+    </div>
+</body>
+</html>
