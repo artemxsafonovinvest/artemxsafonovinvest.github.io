@@ -84,6 +84,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
 .cta p{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:14px;}
 .cta a{display:inline-block;background:var(--gold);color:var(--navy);padding:10px 24px;border-radius:20px;text-decoration:none;font-weight:700;font-size:13px;}
 .cta .dis{font-size:10px;color:rgba(255,255,255,.4);margin-top:10px;}
+
+.cur-switch{display:flex;align-items:center;justify-content:center;gap:4px;margin:0 auto 20px;background:rgba(34,81,163,.08);border-radius:12px;padding:4px;width:fit-content;}
+.cur-btn{padding:9px 28px;border-radius:9px;border:none;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:#6b7280;background:transparent;}
+.cur-btn.active{background:#0f1f3d;color:white;box-shadow:0 2px 8px rgba(15,31,61,.25);}
+.cur-btn:hover:not(.active){color:#0f1f3d;}
 @media(max-width:560px){.rg,.inf-grid{grid-template-columns:1fr;}.card{padding:18px 14px;}.tabs{flex-direction:column;}}
 </style>
 </head>
@@ -100,6 +105,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
 </div>
 
 <div class="container">
+<div style="text-align:center;margin-bottom:6px;font-size:12px;color:#6b7280;">Выберите валюту</div>
+<div class="cur-switch">
+  <button class="cur-btn active" id="btn-rub" onclick="setCur('rub')">🇷🇺 Рубли ₽</button>
+  <button class="cur-btn" id="btn-usd" onclick="setCur('usd')">🇺🇸 Доллары $</button>
+</div>
 <div class="tabs">
   <button class="tab active" onclick="switchTab('capital')">💰 Капитал для цели</button>
   <button class="tab" onclick="switchTab('rule4')">📐 Правило 4%</button>
@@ -112,9 +122,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
   <div class="card">
     <div class="card-title"><span>🎯</span> Сколько нужно капитала</div>
     <div class="sg">
-      <div class="sl-row"><span class="sl-text">Желаемый пассивный доход</span><span><span class="sl-val" id="v-income">50 000</span><span class="sl-unit">руб/мес</span></span></div>
-      <input type="range" id="sl-income" min="10000" max="1000000" step="5000" value="50000" oninput="calcCapital()">
-      <div class="sl-mm"><span>10 000</span><span>1 000 000 руб</span></div>
+      <div class="sl-row"><span class="sl-text">Желаемый пассивный доход</span><span><span class="sl-val" id="v-income">50 000</span><span class="sl-unit" id="unit-income">руб/мес</span></span></div>
+      <input type="range" id="sl-income" min="10000" max="3000000" step="10000" value="50000" oninput="calcCapital()">
+      <div class="sl-mm"><span id="income-min-lbl">10 000</span><span id="income-max-lbl">3 000 000 руб</span></div>
     </div>
     <div class="sg">
       <div class="sl-row"><span class="sl-text">Ожидаемая доходность портфеля</span><span><span class="sl-val green" id="v-yield">10</span><span class="sl-unit">% год</span></span></div>
@@ -122,9 +132,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
       <div class="sl-mm"><span>5%</span><span>30%</span></div>
     </div>
     <div class="sg">
-      <div class="sl-row"><span class="sl-text">Уже есть накоплений</span><span><span class="sl-val" id="v-have">0</span><span class="sl-unit">руб</span></span></div>
+      <div class="sl-row"><span class="sl-text">Уже есть накоплений</span><span><span class="sl-val" id="v-have">0</span><span class="sl-unit" id="unit-have">руб</span></span></div>
       <input type="range" id="sl-have" min="0" max="10000000" step="100000" value="0" oninput="calcCapital()">
-      <div class="sl-mm"><span>0</span><span>10 млн руб</span></div>
+      <div class="sl-mm"><span>0</span><span id="have-max-lbl">10 млн руб</span></div>
     </div>
     <div class="rg" id="cap-results"></div>
 
@@ -168,9 +178,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
     </div>
 
     <div class="sg">
-      <div class="sl-row"><span class="sl-text">Начальный капитал</span><span><span class="sl-val" id="v-r4cap">6 000 000</span><span class="sl-unit">руб</span></span></div>
+      <div class="sl-row"><span class="sl-text">Начальный капитал</span><span><span class="sl-val" id="v-r4cap">6 000 000</span><span class="sl-unit" id="unit-r4cap">руб</span></span></div>
       <input type="range" id="sl-r4cap" min="500000" max="50000000" step="500000" value="6000000" oninput="calcRule4()">
-      <div class="sl-mm"><span>500 тыс</span><span>50 млн</span></div>
+      <div class="sl-mm"><span id="r4cap-min-lbl">500 тыс ₽</span><span id="r4cap-max-lbl">50 млн</span></div>
     </div>
     <div class="sg">
       <div class="sl-row"><span class="sl-text">Доходность портфеля</span><span><span class="sl-val green" id="v-r4ret">10</span><span class="sl-unit">% год</span></span></div>
@@ -208,7 +218,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
   <div class="card">
     <div class="card-title"><span>🚀</span> Два сценария: сегодня vs через год</div>
     <div class="sg">
-      <div class="sl-row"><span class="sl-text">Ежемесячный взнос</span><span><span class="sl-val" id="v-monthly">15 000</span><span class="sl-unit">руб/мес</span></span></div>
+      <div class="sl-row"><span class="sl-text">Ежемесячный взнос</span><span><span class="sl-val" id="v-monthly">15 000</span><span class="sl-unit" id="unit-monthly">руб/мес</span></span></div>
       <input type="range" id="sl-monthly" min="1000" max="100000" step="1000" value="15000" oninput="calcCompound()">
       <div class="sl-mm"><span>1 000</span><span>100 000 руб</span></div>
     </div>
@@ -249,17 +259,89 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
 </div>
 
 <div class="cta">
-  <h3>🏛️ Хотите выстроить капитал системно?</h3>
-  <p>Заходите в закрытый клуб <strong style="color:var(--gold-light)">Архитектор капитала</strong> — разбираем инвестиции, крипту и семейный капитал вживую. Первый месяц бесплатно.</p>
-  <a href="https://t.me/+gZjDlPHTwEw0MTFi" target="_blank" style="font-size:15px;padding:12px 32px;">Войти в клуб бесплатно →</a>
-  <div class="dis">Еженедельные эфиры · База знаний · Артём всегда на связи</div>
+  <h3>🏛️ Архитектор капитала</h3>
+  <p>Закрытый клуб по инвестициям и крипте. Первый месяц бесплатно.</p>
+  <a href="https://t.me/+gZjDlPHTwEw0MTFi" target="_blank">Войти в клуб бесплатно →</a>
   <div class="dis">Артём Сафонов · Все расчёты примерные, не включают налоги и комиссии</div>
 </div>
 </div>
 
 <script>
-function fmt(n){if(n>=1000000)return(n/1000000).toFixed(2).replace(".00","")+" млн";if(n>=1000)return new Intl.NumberFormat("ru").format(Math.round(n));return Math.round(n)+""}
-function fmtR(n){return new Intl.NumberFormat("ru").format(Math.round(n))+" руб"}
+var CUR='rub';
+var CFG={
+  rub:{
+    sym:'₽', word:'руб', permon:'руб/мес',
+    income_min:10000, income_max:3000000, income_step:10000, income_def:50000,
+    income_min_lbl:'10 000', income_max_lbl:'3 000 000 руб',
+    have_max:30000000, have_step:500000, have_def:0, have_max_lbl:'30 млн руб',
+    monthly_max:500000, monthly_step:5000, monthly_def:15000,
+    r4cap_min:500000, r4cap_max:150000000, r4cap_step:1000000, r4cap_def:6000000,
+    r4cap_min_lbl:'500 тыс', r4cap_max_lbl:'50 млн'
+  },
+  usd:{
+    sym:'$', word:'$', permon:'$/мес',
+    income_min:100, income_max:50000, income_step:100, income_def:2000,
+    income_min_lbl:'$100', income_max_lbl:'$50 000',
+    have_max:1000000, have_step:5000, have_def:0, have_max_lbl:'$1 000 000',
+    monthly_max:20000, monthly_step:100, monthly_def:500,
+    r4cap_min:5000, r4cap_max:5000000, r4cap_step:1000, r4cap_def:5000,
+    r4cap_min_lbl:'$10 000', r4cap_max_lbl:'$5 000 000'
+  }
+};
+
+function WORD(){ return CFG[CUR].word; }
+function PERMON(){ return CFG[CUR].permon; }
+
+function setCur(c){
+  CUR = c;
+  document.getElementById('btn-rub').classList.toggle('active', c==='rub');
+  document.getElementById('btn-usd').classList.toggle('active', c==='usd');
+  var L = CFG[c];
+  
+  // Income slider
+  var si = document.getElementById('sl-income');
+  si.min = L.income_min; si.max = L.income_max; si.step = L.income_step; si.value = L.income_def;
+  document.getElementById('income-min-lbl').textContent = L.income_min_lbl;
+  document.getElementById('income-max-lbl').textContent = L.income_max_lbl;
+  document.getElementById('unit-income').textContent = L.permon;
+
+  // Have slider
+  var sh = document.getElementById('sl-have');
+  sh.max = L.have_max; sh.step = L.have_step; sh.value = L.have_def;
+  document.getElementById('have-max-lbl').textContent = L.have_max_lbl;
+  document.getElementById('unit-have').textContent = L.word;
+
+  // Monthly slider (compound tab)
+  var sm = document.getElementById('sl-monthly');
+  sm.max = L.monthly_max; sm.step = L.monthly_step; sm.value = L.monthly_def;
+  document.getElementById('unit-monthly').textContent = L.permon;
+
+  // R4 capital slider
+  var sr = document.getElementById('sl-r4cap');
+  sr.min = L.r4cap_min; sr.max = L.r4cap_max; sr.step = L.r4cap_step; sr.value = L.r4cap_def;
+  document.getElementById('r4cap-min-lbl').textContent = L.r4cap_min_lbl;
+  document.getElementById('r4cap-max-lbl').textContent = L.r4cap_max_lbl;
+  document.getElementById('unit-r4cap').textContent = L.word;
+
+  // Update all range tracks
+  document.querySelectorAll('input[type=range]').forEach(function(el){ updTrack(el); });
+  
+  // Recalculate all
+  calcCapital(); calcRule4(); calcCompound(); buildTables();
+}
+
+
+function fmt(n){
+  if(CUR==='usd'){
+    if(n>=1000000)return'$'+(n/1000000).toFixed(2).replace('.00','')+'M';
+    if(n>=1000)return'$'+new Intl.NumberFormat('ru').format(Math.round(n));
+    return'$'+Math.round(n);
+  }
+  if(n>=1000000)return(n/1000000).toFixed(2).replace('.00','')+' млн';
+  if(n>=1000)return new Intl.NumberFormat('ru').format(Math.round(n));
+  return Math.round(n)+'';
+}
+function fmtR(n){return new Intl.NumberFormat('ru').format(Math.round(n))+' '+WORD();}
 function pmt(r,n,pv,fv){const rm=r/12;if(rm===0)return(fv-pv)/n;return(fv-pv*Math.pow(1+rm,n))*rm/(Math.pow(1+rm,n)-1);}
 function fvCalc(r,n,m,pv){const rm=r/12;if(rm===0)return pv+m*n;return pv*Math.pow(1+rm,n)+m*(Math.pow(1+rm,n)-1)/rm;}
 function updTrack(el){const pct=((+el.value-+el.min)/(+el.max-+el.min)*100).toFixed(1);el.style.setProperty("--pct",pct+"%");}
