@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анкета клиента — Артём Сафонов</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f0f7;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+  .header p { font-size: 15px; opacity: 0.85; max-width: 500px; margin: 0 auto; }
+
+  .progress-bar-wrap {
+    background: #e0e0ef;
+    height: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .progress-bar {
+    height: 6px;
+    background: linear-gradient(90deg, #7c3aed, #a855f7);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 30px 16px 60px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-badge {
+    display: inline-block;
+    background: #7c3aed;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .section-header {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border-left: 4px solid #7c3aed;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .section-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .section-header p { font-size: 14px; color: #555; font-style: italic; line-height: 1.5; }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .field-label {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .required { color: #e53e3e; }
+
+  input[type="text"],
+  input[type="number"],
+  textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #e0e0ef;
+    padding: 10px 4px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    transition: border-color 0.2s;
+    color: #1a1a2e;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  textarea:focus {
+    border-bottom-color: #7c3aed;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .radio-group, .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .radio-option, .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid #e8e8f0;
+    transition: all 0.2s;
+    font-size: 15px;
+  }
+  .radio-option:hover, .checkbox-option:hover {
+    border-color: #a855f7;
+    background: #faf5ff;
+  }
+  .radio-option input, .checkbox-option input { display: none; }
+  .radio-option.selected, .checkbox-option.selected {
+    border-color: #7c3aed;
+    background: #f5f0ff;
+    font-weight: 600;
+  }
+  .radio-dot, .check-box {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .check-box { border-radius: 5px; }
+  .radio-option.selected .radio-dot,
+  .checkbox-option.selected .check-box {
+    border-color: #7c3aed;
+    background: #7c3aed;
+  }
+  .radio-dot::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: white;
+    display: none;
+  }
+  .radio-option.selected .radio-dot::after { display: block; }
+  .check-box::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: none;
+  }
+  .checkbox-option.selected .check-box::after { display: block; }
+
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: space-between;
+  }
+  .btn {
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: white;
+    flex: 1;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,58,237,0.4); }
+  .btn-secondary {
+    background: #f0f0f7;
+    color: #555;
+    min-width: 100px;
+  }
+  .btn-secondary:hover { background: #e0e0ef; }
+
+  .placeholder-text { color: #aaa; font-size: 14px; }
+
+  /* Welcome screen */
+  .welcome-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    margin-top: 20px;
+  }
+  .welcome-icon { font-size: 56px; margin-bottom: 20px; }
+  .welcome-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+  .welcome-card p { color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+  .welcome-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+  .tag {
+    background: #f5f0ff;
+    color: #7c3aed;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Success screen */
+  .success-card {
+    background: white;
+    border-radius: 20px;
+    padding: 50px 30px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    margin-top: 20px;
+  }
+  .success-icon { font-size: 64px; margin-bottom: 20px; }
+  .success-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #7c3aed; }
+  .success-card p { color: #666; font-size: 15px; line-height: 1.6; }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 22px; }
+    .btn { padding: 12px 20px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 Анкета клиента</h1>
+  <p>Артём Сафонов · Независимый финансовый советник</p>
+</div>
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="container">
+
+  <!-- SECTION 0: Welcome -->
+  <div class="section active" id="section-0">
+    <div class="welcome-card">
+      <div class="welcome-icon">💼</div>
+      <h2>Анкета клиента</h2>
+      <p>Заполните анкету — это займёт <strong>10–15 минут</strong>.<br>Чем честнее данные, тем точнее будет ваш финансовый план.<br>Все данные конфиденциальны.</p>
+      <div class="welcome-tags">
+        <span class="tag">📊 8 разделов</span>
+        <span class="tag">🔒 Конфиденциально</span>
+        <span class="tag">⏱ 10–15 минут</span>
+      </div>
+      <button class="btn btn-primary" onclick="goTo(1)" style="width:100%;max-width:300px;">Начать анкету →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 1: Личные данные -->
+  <div class="section" id="section-1">
+    <div class="section-badge">Раздел 1 из 7</div>
+    <div class="section-header">
+      <h2>👤 Личные данные</h2>
+      <p>Эта информация помогает мне лучше понять вашу жизненную ситуацию и учесть её при составлении плана.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Имя и фамилия <span class="required">*</span></div>
+      <input type="text" id="name" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Возраст <span class="required">*</span></div>
+      <input type="number" id="age" placeholder="Краткий ответ" min="18" max="80">
+    </div>
+    <div class="card">
+      <div class="field-label">Город <span class="required">*</span></div>
+      <input type="text" id="city" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Семейное положение <span class="required">*</span></div>
+      <div class="radio-group" id="marital">
+        <label class="radio-option" onclick="selectRadio(this,'marital')">
+          <input type="radio" name="marital" value="Не замужем / не женат">
+          <span class="radio-dot"></span> Не замужем / не женат
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'marital')">
+          <input type="radio" name="marital" value="Замужем / женат">
+          <span class="radio-dot"></span> Замужем / женат
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Дети (количество и возраст) <span class="required">*</span></div>
+      <input type="text" id="children" placeholder="Например: 2 детей, 5 и 10 лет">
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(0)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Доходы -->
+  <div class="section" id="section-2">
+    <div class="section-badge">Раздел 2 из 7</div>
+    <div class="section-header">
+      <h2>📈 Доходы</h2>
+      <p>Укажите все источники дохода. Чем точнее цифры — тем реалистичнее будет ваш план. Если доход нестабильный — укажите среднее за последние 3 месяца.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Основной доход руб/мес <span class="required">*</span></div>
+      <input type="number" id="income_main" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Дополнительный доход руб/мес</div>
+      <input type="number" id="income_extra" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Источник дохода (главный) <span class="required">*</span></div>
+      <div class="checkbox-group" id="income_source">
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'income_source')">
+          <span class="check-box"></span> Наёмный сотрудник
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'income_source')">
+          <span class="check-box"></span> ИП
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'income_source')">
+          <span class="check-box"></span> Фриланс / самозанятый
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'income_source')">
+          <span class="check-box"></span> Инвестиционный доход
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Расходы -->
+  <div class="section" id="section-3">
+    <div class="section-badge">Раздел 3 из 7</div>
+    <div class="section-header">
+      <h2>💸 Расходы</h2>
+      <p>Расходы не нужно считать до копейки — приблизительные цифры подойдут. Если не ведёте учёт — попробуйте вспомнить средний месяц.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Основной расход руб/мес <span class="required">*</span></div>
+      <input type="number" id="expense_main" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Сколько остаётся в конце месяца? <span class="required">*</span></div>
+      <input type="number" id="expense_rest" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Как откладываете? <span class="required">*</span></div>
+      <div class="radio-group" id="saving_method">
+        <label class="radio-option" onclick="selectRadio(this,'saving_method')">
+          <input type="radio" name="saving_method" value="В начале месяца">
+          <span class="radio-dot"></span> В начале месяца
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'saving_method')">
+          <input type="radio" name="saving_method" value="В конце, если осталось">
+          <span class="radio-dot"></span> В конце, если осталось
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'saving_method')">
+          <input type="radio" name="saving_method" value="Не откладываю">
+          <span class="radio-dot"></span> Не откладываю
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Активы -->
+  <div class="section" id="section-4">
+    <div class="section-badge">Раздел 4 из 7</div>
+    <div class="section-header">
+      <h2>🏦 Активы</h2>
+      <p>Всё что у вас есть и имеет ценность. Это отправная точка для построения капитала.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Деньги на картах и наличные руб <span class="required">*</span></div>
+      <input type="text" id="cash" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Вклады (банк, сумма, %) <span class="required">*</span></div>
+      <input type="text" id="deposits" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Инвестиционный счёт <span class="required">*</span></div>
+      <input type="text" id="invest_account" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Что есть в портфеле? <span class="required">*</span></div>
+      <div class="checkbox-group" id="portfolio">
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Акции
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Облигации
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Фонды
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Золото / металлы
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Криптавалюта
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Инвестиционная недвижимость
+        </label>
+        <label class="checkbox-option" onclick="toggleCheckbox(this,'portfolio')">
+          <span class="check-box"></span> Ничего
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Своя недвижимость? <span class="required">*</span></div>
+      <div class="radio-group" id="own_realty">
+        <label class="radio-option" onclick="selectRadio(this,'own_realty')">
+          <input type="radio" name="own_realty" value="Да">
+          <span class="radio-dot"></span> Да
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'own_realty')">
+          <input type="radio" name="own_realty" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Автомобиль? <span class="required">*</span></div>
+      <div class="radio-group" id="car">
+        <label class="radio-option" onclick="selectRadio(this,'car')">
+          <input type="radio" name="car" value="Да">
+          <span class="radio-dot"></span> Да
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'car')">
+          <input type="radio" name="car" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Другие ценные активы</div>
+      <input type="text" id="other_assets" placeholder="Краткий ответ">
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(3)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Долги -->
+  <div class="section" id="section-5">
+    <div class="section-badge">Раздел 5 из 7</div>
+    <div class="section-header">
+      <h2>💳 Долги</h2>
+      <p>Долги — это не стыдно, это просто часть финансовой картины. Без этих данных план будет неполным.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Есть ли кредиты <span class="required">*</span></div>
+      <div class="radio-group" id="has_credits">
+        <label class="radio-option" onclick="selectRadio(this,'has_credits')">
+          <input type="radio" name="has_credits" value="Да">
+          <span class="radio-dot"></span> Да
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'has_credits')">
+          <input type="radio" name="has_credits" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Ипотека (остаток, ставка, платёж) <span class="required">*</span></div>
+      <textarea id="mortgage" placeholder="Развернутый ответ"></textarea>
+    </div>
+    <div class="card">
+      <div class="field-label">Потребкредит (остаток, ставка, платёж) <span class="required">*</span></div>
+      <input type="text" id="consumer_credit" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Кредитная карта (лимит, долг) <span class="required">*</span></div>
+      <input type="text" id="credit_card" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">Рассрочки (остаток, платёж) <span class="required">*</span></div>
+      <input type="text" id="installments" placeholder="Краткий ответ">
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(4)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(6)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Защита -->
+  <div class="section" id="section-6">
+    <div class="section-badge">Раздел 6 из 7</div>
+    <div class="section-header">
+      <h2>🛡 Защита</h2>
+      <p>Многие пропускают этот блок — и зря. Один незащищённый риск может обнулить годы накоплений.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Страхование жизни <span class="required">*</span></div>
+      <div class="radio-group" id="life_insurance">
+        <label class="radio-option" onclick="selectRadio(this,'life_insurance')">
+          <input type="radio" name="life_insurance" value="Да">
+          <span class="radio-dot"></span> Да
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'life_insurance')">
+          <input type="radio" name="life_insurance" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'life_insurance')">
+          <input type="radio" name="life_insurance" value="Не знаю">
+          <span class="radio-dot"></span> Не знаю
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">ДМС <span class="required">*</span></div>
+      <div class="radio-group" id="dms">
+        <label class="radio-option" onclick="selectRadio(this,'dms')">
+          <input type="radio" name="dms" value="От работодателя">
+          <span class="radio-dot"></span> От работодателя
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'dms')">
+          <input type="radio" name="dms" value="Сам оплачиваю">
+          <span class="radio-dot"></span> Сам оплачиваю
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'dms')">
+          <input type="radio" name="dms" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Резервный фонд (сумма) <span class="required">*</span></div>
+      <input type="text" id="reserve_fund" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">На сколько месяцев хватит <span class="required">*</span></div>
+      <div class="radio-group" id="reserve_months">
+        <label class="radio-option" onclick="selectRadio(this,'reserve_months')">
+          <input type="radio" name="reserve_months" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'reserve_months')">
+          <input type="radio" name="reserve_months" value="до 1 мес">
+          <span class="radio-dot"></span> до 1 мес
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'reserve_months')">
+          <input type="radio" name="reserve_months" value="1–3 мес">
+          <span class="radio-dot"></span> 1–3 мес
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'reserve_months')">
+          <input type="radio" name="reserve_months" value="3–6 мес">
+          <span class="radio-dot"></span> 3–6 мес
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'reserve_months')">
+          <input type="radio" name="reserve_months" value="6+ мес">
+          <span class="radio-dot"></span> 6+ мес
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(5)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(7)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Цели -->
+  <div class="section" id="section-7">
+    <div class="section-badge">Раздел 7 из 7 — Последний!</div>
+    <div class="section-header">
+      <h2>🎯 Цели</h2>
+      <p>Самый важный раздел. Отвечайте честно — именно под ваши цели я буду строить план.</p>
+    </div>
+
+    <div class="card">
+      <div class="field-label">Главная финансовая цель <span class="required">*</span></div>
+      <textarea id="main_goal" placeholder="Развернутый ответ"></textarea>
+    </div>
+    <div class="card">
+      <div class="field-label">Желаемый пассивный доход руб/мес <span class="required">*</span></div>
+      <input type="number" id="passive_income" placeholder="Краткий ответ">
+    </div>
+    <div class="card">
+      <div class="field-label">К какому сроку <span class="required">*</span></div>
+      <div class="radio-group" id="goal_term">
+        <label class="radio-option" onclick="selectRadio(this,'goal_term')">
+          <input type="radio" name="goal_term" value="До 3 лет">
+          <span class="radio-dot"></span> До 3 лет
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'goal_term')">
+          <input type="radio" name="goal_term" value="3–5 лет">
+          <span class="radio-dot"></span> 3–5 лет
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'goal_term')">
+          <input type="radio" name="goal_term" value="5–10 лет">
+          <span class="radio-dot"></span> 5–10 лет
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'goal_term')">
+          <input type="radio" name="goal_term" value="10+ лет">
+          <span class="radio-dot"></span> 10+ лет
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Что уже пробовали <span class="required">*</span></div>
+      <div class="radio-group" id="tried">
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Вклады">
+          <span class="radio-dot"></span> Вклады
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Акции">
+          <span class="radio-dot"></span> Акции
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Фонды">
+          <span class="radio-dot"></span> Фонды
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Крипта">
+          <span class="radio-dot"></span> Крипта
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Инвестиционная недвижимость">
+          <span class="radio-dot"></span> Инвестиционная недвижимость
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Ничего">
+          <span class="radio-dot"></span> Ничего
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tried')">
+          <input type="radio" name="tried" value="Другое">
+          <span class="radio-dot"></span> Другое
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field-label">Ведёте учёт доходов и расходов <span class="required">*</span></div>
+      <div class="radio-group" id="tracking">
+        <label class="radio-option" onclick="selectRadio(this,'tracking')">
+          <input type="radio" name="tracking" value="Да">
+          <span class="radio-dot"></span> Да
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tracking')">
+          <input type="radio" name="tracking" value="Нет">
+          <span class="radio-dot"></span> Нет
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'tracking')">
+          <input type="radio" name="tracking" value="Иногда">
+          <span class="radio-dot"></span> Иногда
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goTo(6)">← Назад</button>
+      <button class="btn btn-primary" onclick="submitForm()" style="background: linear-gradient(135deg, #059669, #10b981);">✅ Отправить анкету</button>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Success -->
+  <div class="section" id="section-8">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <h2>Анкета отправлена!</h2>
+      <p>Спасибо! Я получил ваши данные и свяжусь с вами в ближайшее время для обсуждения вашего финансового плана.</p>
+      <br>
+      <p style="color:#7c3aed; font-weight:600;">Артём Сафонов · Независимый финансовый советник</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_SECTIONS = 8;
+let currentSection = 0;
+
+function goTo(n) {
+  document.getElementById('section-' + currentSection).classList.remove('active');
+  currentSection = n;
+  document.getElementById('section-' + currentSection).classList.add('active');
+  updateProgress();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function updateProgress() {
+  const pct = currentSection === 0 ? 0 : Math.round((currentSection / 7) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function selectRadio(el, groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  group.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleCheckbox(el, groupId) {
+  el.classList.toggle('selected');
+}
+
+function collectData() {
+  const getRadioVal = (groupId) => {
+    const group = document.getElementById(groupId);
+    if (!group) return '—';
+    const sel = group.querySelector('.radio-option.selected');
+    return sel ? sel.textContent.trim() : '—';
+  };
+  const getCheckboxVals = (groupId) => {
+    const group = document.getElementById(groupId);
+    if (!group) return '—';
+    const sels = group.querySelectorAll('.checkbox-option.selected');
+    if (!sels.length) return '—';
+    return Array.from(sels).map(s => s.textContent.trim()).join(', ');
+  };
+  const getVal = (id) => {
+    const el = document.getElementById(id);
+    return el && el.value ? el.value : '—';
+  };
+
+  return {
+    name: getVal('name'),
+    age: getVal('age'),
+    city: getVal('city'),
+    marital: getRadioVal('marital'),
+    children: getVal('children'),
+    income_main: getVal('income_main'),
+    income_extra: getVal('income_extra'),
+    income_source: getCheckboxVals('income_source'),
+    expense_main: getVal('expense_main'),
+    expense_rest: getVal('expense_rest'),
+    saving_method: getRadioVal('saving_method'),
+    cash: getVal('cash'),
+    deposits: getVal('deposits'),
+    invest_account: getVal('invest_account'),
+    portfolio: getCheckboxVals('portfolio'),
+    own_realty: getRadioVal('own_realty'),
+    car: getRadioVal('car'),
+    other_assets: getVal('other_assets'),
+    has_credits: getRadioVal('has_credits'),
+    mortgage: getVal('mortgage'),
+    consumer_credit: getVal('consumer_credit'),
+    credit_card: getVal('credit_card'),
+    installments: getVal('installments'),
+    life_insurance: getRadioVal('life_insurance'),
+    dms: getRadioVal('dms'),
+    reserve_fund: getVal('reserve_fund'),
+    reserve_months: getRadioVal('reserve_months'),
+    main_goal: getVal('main_goal'),
+    passive_income: getVal('passive_income'),
+    goal_term: getRadioVal('goal_term'),
+    tried: getRadioVal('tried'),
+    tracking: getRadioVal('tracking'),
+  };
+}
+
+function formatTelegramMessage(d) {
+  return `📋 *НОВАЯ АНКЕТА КЛИЕНТА*
+
+👤 *Личные данные*
+• Имя: ${d.name}
+• Возраст: ${d.age}
+• Город: ${d.city}
+• Семья: ${d.marital}
+• Дети: ${d.children}
+
+📈 *Доходы*
+• Основной: ${d.income_main} руб/мес
+• Дополнительный: ${d.income_extra} руб/мес
+• Источник: ${d.income_source}
+
+💸 *Расходы*
+• Основные расходы: ${d.expense_main} руб/мес
+• Остаток в месяц: ${d.expense_rest} руб
+• Как откладывает: ${d.saving_method}
+
+🏦 *Активы*
+• Наличные/карты: ${d.cash} руб
+• Вклады: ${d.deposits}
+• Инвест. счёт: ${d.invest_account}
+• Портфель: ${d.portfolio}
+• Недвижимость: ${d.own_realty}
+• Авто: ${d.car}
+• Другие активы: ${d.other_assets}
+
+💳 *Долги*
+• Есть кредиты: ${d.has_credits}
+• Ипотека: ${d.mortgage}
+• Потребкредит: ${d.consumer_credit}
+• Кредитная карта: ${d.credit_card}
+• Рассрочки: ${d.installments}
+
+🛡 *Защита*
+• Страхование жизни: ${d.life_insurance}
+• ДМС: ${d.dms}
+• Резервный фонд: ${d.reserve_fund} руб
+• На сколько месяцев: ${d.reserve_months}
+
+🎯 *Цели*
+• Главная цель: ${d.main_goal}
+• Желаемый пассивный доход: ${d.passive_income} руб/мес
+• Срок: ${d.goal_term}
+• Что пробовали: ${d.tried}
+• Ведёт учёт: ${d.tracking}`;
+}
+
+async function submitForm() {
+  const data = collectData();
+  const message = formatTelegramMessage(data);
+
+  // ===== НАСТРОЙКИ TELEGRAM =====
+  const BOT_TOKEN = '8076400158:AAEZEyixrfjwrvkGCCntkieX_nlijiTjY2Q';
+  const CHAT_ID = '110215784';
+  // ==============================
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: 'Markdown'
+      })
+    });
+    const result = await response.json();
+    if (result.ok) {
+      goTo(8);
+    } else {
+      alert('Ошибка отправки. Попробуйте ещё раз.');
+      console.error(result);
+    }
+  } catch (e) {
+    alert('Ошибка сети. Проверьте подключение.');
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>

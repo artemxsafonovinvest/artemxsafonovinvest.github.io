@@ -624,6 +624,112 @@
 .uni-tg-sub{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px;line-height:1.6;}
 .uni-tg-btn{display:inline-flex;align-items:center;gap:8px;background:#C8972A;color:#fff;text-decoration:none;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;}
 .uni-tg-hint{margin-top:8px;font-size:11px;color:rgba(255,255,255,.4);}
+
+/* === CONTACT FORM OVERLAY === */
+#contactOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,31,61,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+#contactOverlay.visible { display: flex; }
+.contact-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 36px;
+  max-width: 440px;
+  width: 92%;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  animation: slideUp 0.35s ease;
+}
+.contact-modal h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #0f1f3d;
+  margin-bottom: 8px;
+}
+.contact-modal .sub {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+.contact-field { margin-bottom: 18px; }
+.contact-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+.contact-field input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.contact-field input:focus { border-color: #2251a3; }
+.contact-field input.error { border-color: #ef4444; }
+.contact-error { font-size: 12px; color: #ef4444; margin-top: 4px; display: none; }
+.contact-field input.error + .contact-error { display: block; }
+.btn-contact-submit {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #2251a3, #1a3260);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-contact-submit:hover { opacity: 0.92; transform: translateY(-1px); }
+.btn-contact-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.contact-skip {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #9ca3af;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.contact-skip:hover { color: #6b7280; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* === CTA BUTTON AFTER RESULT === */
+.btn-tg-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #2251a3, #1a3260);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-tg-main:hover { opacity: 0.92; transform: translateY(-1px); }
+.result-cta-wrap { padding: 0 36px 36px; text-align: center; }
+.result-cta-hint { font-size: 13px; color: #9ca3af; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -665,6 +771,29 @@
 
   <div class="result-card" id="resultCard"></div>
 
+</div>
+
+
+<!-- CONTACT FORM OVERLAY -->
+<div id="contactOverlay">
+  <div class="contact-modal">
+    <h2>Ваш результат готов! 🎯</h2>
+    <p class="sub">Оставьте контакт — и Артём пришлёт персональный разбор вашего профиля и рекомендации по портфелю.</p>
+    <div class="contact-field">
+      <label>Ваше имя *</label>
+      <input type="text" id="cf-name" placeholder="Как вас зовут?" autocomplete="name"/>
+      <div class="contact-error">Пожалуйста, укажите имя</div>
+    </div>
+    <div class="contact-field">
+      <label>Telegram *</label>
+      <input type="text" id="cf-tg" placeholder="@username или номер телефона" autocomplete="off"/>
+      <div class="contact-error">Пожалуйста, укажите Telegram</div>
+    </div>
+    <button class="btn-contact-submit" id="cf-submit" onclick="submitContactForm()">
+      Получить персональный разбор →
+    </button>
+    <span class="contact-skip" onclick="showResult()">Пропустить и посмотреть результат</span>
+  </div>
 </div>
 
 <script>
@@ -775,7 +904,7 @@ function selectOption(i) {
 
 function nextQuestion() {
   if (answers[current]===null) return;
-  if (current<questions.length-1){current++;renderQuestion();}else{showResult();}
+  if (current<questions.length-1){current++;renderQuestion();}else{showContactForm();}
 }
 function prevQuestion(){if(current>0){current--;renderQuestion();}}
 
@@ -864,8 +993,12 @@ function showResult() {
         <ul class="warn-list">${profile.warnings.map(w=>`<li>${w}</li>`).join('')}</ul>
       </div>
     </div>
-    <div style="text-align:center;margin-top:24px;padding:0 32px 32px;">
-      <button class="btn-restart" onclick="restart()">↺ Пройти тест заново</button>
+    <div class="result-cta-wrap">
+      <a href="https://t.me/Architectcapitalassistant_bot" target="_blank" class="btn-tg-main">
+        💬 Получить разбор от Артёма в Telegram
+      </a>
+      <div class="result-cta-hint">Бот задаст уточняющие вопросы и подберёт стратегию под вас</div>
+      <button class="btn-restart" onclick="restart()" style="margin-top:16px;width:100%;">↺ Пройти тест заново</button>
     </div>
   `;
   setTimeout(()=>{const f=document.getElementById('scoreFill');if(f)f.style.width=pct+'%';},100);
@@ -879,6 +1012,81 @@ function restart(){
   document.getElementById('nav').style.display='flex';
   document.getElementById('blockProgressWrap').style.display='block';
   renderQuestion();
+}
+
+
+// === TELEGRAM INTEGRATION ===
+// ВАЖНО: замените значения ниже на реальные данные вашего бота
+const TG_BOT_TOKEN = '8076400158:AAEZEyixrfjwrvkGCCntkieX_nlijiTjY2Q';  // Токен от @BotFather
+const TG_CHAT_ID   = '110215784';    // Ваш chat_id (узнать у @userinfobot)
+
+let _pendingProfile = null;  // хранит профиль до показа формы
+
+function showContactForm() {
+  // Рассчитываем профиль заранее (чтобы отправить вместе с формой)
+  const score = calcScore();
+  const maxScore = questions.reduce((s,q)=>s+Math.max(...q.options.map(o=>o.score)),0);
+  const pct = Math.round((score/maxScore)*100);
+  let profileKey;
+  if (pct<=38) profileKey = 'Консервативный';
+  else if (pct<=65) profileKey = 'Умеренный';
+  else profileKey = 'Агрессивный';
+  _pendingProfile = { pct, profileKey };
+  document.getElementById('contactOverlay').classList.add('visible');
+}
+
+async function submitContactForm() {
+  const nameEl = document.getElementById('cf-name');
+  const tgEl   = document.getElementById('cf-tg');
+  let valid = true;
+
+  nameEl.classList.remove('error');
+  tgEl.classList.remove('error');
+
+  if (!nameEl.value.trim()) { nameEl.classList.add('error'); valid = false; }
+  if (!tgEl.value.trim())   { tgEl.classList.add('error');   valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('cf-submit');
+  btn.disabled = true;
+  btn.textContent = 'Отправляем...';
+
+  const name = nameEl.value.trim();
+  const tg   = tgEl.value.trim();
+
+  await sendRiskResultToTelegram(name, tg);
+
+  document.getElementById('contactOverlay').classList.remove('visible');
+  showResult();
+}
+
+async function sendRiskResultToTelegram(name, tg) {
+  if (!TG_BOT_TOKEN) return;
+  const score = _pendingProfile ? _pendingProfile.pct : '—';
+  const profile = _pendingProfile ? _pendingProfile.profileKey : '—';
+
+  const text = [
+    '🎯 <b>Новый результат — Тест риск-профиля</b>',
+    '',
+    `👤 <b>Имя:</b> ${name}`,
+    `📱 <b>Telegram:</b> ${tg}`,
+    '',
+    `📊 <b>Профиль:</b> ${profile}`,
+    `📈 <b>Склонность к риску:</b> ${score}%`,
+    '',
+    '🌐 Источник: тест на GitHub Pages',
+    '⏰ ' + new Date().toLocaleString('ru-RU'),
+  ].join('\n');
+
+  try {
+    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' })
+    });
+  } catch(e) {
+    console.error('Telegram send error:', e);
+  }
 }
 
 // Init
