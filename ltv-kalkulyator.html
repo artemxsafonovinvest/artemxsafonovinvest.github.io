@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор LTV и цены ликвидации | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>Безопасный LTV и цена ликвидации</h1>
+    <p>Показывает, при каком падении залога позицию закроют принудительно — и сколько стоит сам заём</p>
+  </div>
+
+  <div class="card">
+    <h2>Параметры займа</h2>
+    <div class="row">
+      <div><label>Стоимость залога</label><input id="col" type="text" inputmode="decimal" value="10 000"></div>
+      <div><label>Сумма займа</label><input id="loan" type="text" inputmode="decimal" value="3 000"></div>
+    </div>
+    <div class="row">
+      <div><label>Ставка, %/год</label><input id="rate" type="text" inputmode="decimal" value="10"></div>
+      <div><label>Срок, месяцев</label><input id="term" type="text" inputmode="decimal" value="12"></div>
+    </div>
+    <label>Порог принудительного закрытия, % LTV <span>обычно 80–85</span></label>
+    <input id="liq" type="text" inputmode="decimal" value="80">
+    <button onclick="calc()">Посчитать</button>
+  </div>
+
+  <div class="res" id="res">
+    <div class="big">
+      <div class="lbl">Ваш LTV</div>
+      <div class="val" id="ltv">—</div>
+      <div class="note" id="ltvn">—</div>
+    </div>
+    <div class="card">
+      <h2>Цена ликвидации</h2>
+      <div class="line"><span>Залог закроют, если он подешевеет до</span><b id="liqv">—</b></div>
+      <div class="line"><span>Это падение на</span><b id="drop">—</b></div>
+      <div class="line"><span>Запас прочности</span><b id="safe">—</b></div>
+      <div class="line"><span>Проценты за весь срок</span><b id="int">—</b></div>
+      <div class="line"><span>Вернуть к концу срока</span><b id="total">—</b></div>
+      <div id="ver"></div>
+    </div>
+    <div class="card">
+      <h2>Сколько можно взять при разном LTV</h2>
+      <table><thead><tr><th>LTV</th><th>Сумма займа</th><th>Ликвидация при падении</th></tr></thead><tbody id="tb"></tbody></table>
+      <div class="warn"><b>Моё правило — не выше 25–30%.</b> Соблазн взять больше возникает всегда, и именно он убивает позицию. Сравните колонку справа с реальными просадками вашего актива за последние три года.</div>
+    </div>
+    <div class="card">
+      <h2>Перед тем как брать</h2>
+      <div class="line"><span><b>Резерв отдельно.</b> Заём никогда не заменяет подушку безопасности. Нет подушки — этого инструмента у вас быть не должно.</span></div>
+      <div class="line"><span><b>Только под возвратную задачу.</b> С понятным источником погашения и сроком. Не на потребление.</span></div>
+      <div class="line"><span><b>Держите запас на пополнение залога.</b> Ликвидация приходит автоматически и в худший момент рынка.</span></div>
+      <div class="line"><span><b>Риск площадки.</b> Залог физически лежит у контрагента — это риск, не связанный с рынком.</span></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Разбираю такие конструкции в канале</h3>
+    <p>На своих реальных сделках — включая те, где приходилось довносить залог.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Не является индивидуальной инвестиционной рекомендацией. Заём под залог волатильного актива связан с риском полной потери залога.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+function calc(){
+  const C=num('col'), L=num('loan'), r=num('rate'), t=num('term'), liq=num('liq')/100;
+  if(!C||!L){alert('Заполните залог и сумму займа');return;}
+  const ltv=L/C;
+  const liqv=L/liq;
+  const drop=1-liqv/C;
+  const int_=L*r/100*t/12;
+  const e=document.getElementById('ltv');
+  e.textContent=f1(ltv*100)+'%';
+  document.getElementById('ltvn').textContent='заём '+f(L)+' под залог '+f(C);
+  document.getElementById('liqv').textContent=f(liqv);
+  const dr=document.getElementById('drop');
+  dr.textContent='−'+f1(drop*100)+'%';
+  dr.className=drop>0.55?'g':(drop>0.35?'o':'r');
+  document.getElementById('safe').innerHTML=drop>0.55?'<span class="tag g">широкий</span>':(drop>0.35?'<span class="tag o">умеренный</span>':'<span class="tag r">опасно узкий</span>');
+  document.getElementById('int').textContent=f(int_);
+  document.getElementById('total').textContent=f(L+int_);
+  const v=document.getElementById('ver');
+  if(ltv<=0.3) v.innerHTML='<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">Рабочий диапазон.</b> Чтобы потерять залог, актив должен подешеветь на '+f1(drop*100)+'%. Это переживаемо для большинства сценариев, но не для всех — держите запас на пополнение.</div>';
+  else if(ltv<=0.5) v.innerHTML='<div class="warn"><b>Пограничная зона.</b> Падение на '+f1(drop*100)+'% для волатильного актива — вопрос нескольких недель плохого рынка. Уменьшите сумму займа или добавьте залог.</div>';
+  else v.innerHTML='<div class="warn" style="border-color:#dc2626;background:rgba(220,38,38,.07)"><b style="color:#dc2626">Так брать нельзя.</b> Достаточно падения на '+f1(drop*100)+'%, чтобы залог продали автоматически, в худший момент и без вашего участия. Вы теряете позицию навсегда.</div>';
+  let rows='';
+  [0.25,0.30,0.50,0.70].forEach(x=>{
+    const lv=C*x, d2=1-(lv/liq)/C;
+    rows+='<tr><td>'+(x*100)+'%</td><td>'+f(lv)+'</td><td class="'+(d2>0.55?'g':(d2>0.35?'o':'r'))+'">−'+f1(d2*100)+'%</td></tr>';
+  });
+  document.getElementById('tb').innerHTML=rows;
+  document.getElementById('res').classList.add('show');
+  document.getElementById('res').scrollIntoView({behavior:'smooth',block:'start'});
+}
+calc();
+
+</script>
+</body>
+</html>

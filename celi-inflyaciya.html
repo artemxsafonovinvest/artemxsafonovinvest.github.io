@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор целей с поправкой на инфляцию | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>Сколько ваша цель будет стоить на самом деле</h1>
+    <p>Подставьте четыре цифры — увидите настоящую сумму к сроку и взнос, который её закрывает</p>
+  </div>
+
+  <div class="card">
+    <h2>Ваша цель</h2>
+    <label>Сколько цель стоит СЕГОДНЯ, ₽ <span>— реальная цена сейчас</span></label>
+    <input id="goal" type="text" inputmode="decimal" value="1 600 000">
+    <div class="row">
+      <div>
+        <label>Через сколько лет</label>
+        <input id="years" type="text" inputmode="decimal" value="11">
+      </div>
+      <div>
+        <label>Рост цен, %/год <span>по этой цели</span></label>
+        <input id="infl" type="text" inputmode="decimal" value="9">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Уже накоплено, ₽</label>
+        <input id="have" type="text" inputmode="decimal" value="0">
+      </div>
+      <div>
+        <label>Доходность, %/год</label>
+        <input id="rate" type="text" inputmode="decimal" value="12">
+      </div>
+    </div>
+    <label>Планирую откладывать, ₽/мес</label>
+    <input id="pmt" type="text" inputmode="decimal" value="10 000">
+    <button onclick="calc()">Посчитать</button>
+  </div>
+
+  <div class="res" id="res">
+    <div class="big">
+      <div class="lbl">Цель будет стоить</div>
+      <div class="val" id="fvgoal">—</div>
+      <div class="note" id="fvnote">—</div>
+    </div>
+    <div class="card">
+      <h2>Что получится с вашим взносом</h2>
+      <div class="line"><span>Накопите к сроку</span><b id="fvplan">—</b></div>
+      <div class="line"><span>Разрыв до цели</span><b id="gap">—</b></div>
+      <div class="line"><span>Нужно откладывать в месяц</span><b id="need">—</b></div>
+      <div class="line"><span>Разница с вашим взносом</span><b id="diff">—</b></div>
+      <div id="verdict"></div>
+    </div>
+    <div class="card">
+      <h2>Как цель дорожает по годам</h2>
+      <table><thead><tr><th>Год</th><th>Цель стоит</th><th>У вас будет</th></tr></thead><tbody id="tb"></tbody></table>
+      <div class="warn"><b>Важно:</b> считайте рост цен по своей категории, а не по общей инфляции. Образование, медицина и недвижимость дорожают быстрее среднего.</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Разбираю такие расчёты в канале</h3>
+    <p>Без обещаний доходности — механика, цифры и риски. Плюс разборы реальных ситуаций из практики.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Расчёт носит информационный характер и не является индивидуальной инвестиционной рекомендацией.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+function calc(){
+  const C=num('goal'), n=num('years'), i=num('infl')/100, r=num('rate')/100, S=num('have'), P=num('pmt');
+  if(n<=0||C<=0){alert('Заполните цель и срок');return;}
+  const rm=r/12, m=Math.round(n*12);
+  const FVgoal=C*Math.pow(1+i,n);
+  const FVhave=S*Math.pow(1+r,n);
+  const k=rm>0?(Math.pow(1+rm,m)-1)/rm:m;
+  const FVplan=P*k+FVhave;
+  const need=Math.max(0,(FVgoal-FVhave)/k);
+  const gap=FVgoal-FVplan;
+  document.getElementById('fvgoal').textContent=f(FVgoal)+' ₽';
+  document.getElementById('fvnote').textContent='сегодня это '+f(C)+' ₽ · рост в '+f1(FVgoal/C)+' раза за '+f1(n)+' лет';
+  document.getElementById('fvplan').textContent=f(FVplan)+' ₽';
+  const g=document.getElementById('gap');
+  g.textContent=(gap>0?'−':'+')+f(Math.abs(gap))+' ₽';
+  g.className=gap>0?'r':'g';
+  document.getElementById('need').textContent=f(need)+' ₽';
+  const d=document.getElementById('diff');
+  const dd=need-P;
+  d.textContent=(dd>0?'+':'')+f(dd)+' ₽/мес';
+  d.className=dd>0?'r':'g';
+  document.getElementById('verdict').innerHTML = gap>0
+    ? '<div class="warn"><b>Цель не закрывается.</b> Не хватает '+f(gap)+' ₽. Чтобы дойти, взнос нужно поднять до '+f(need)+' ₽ в месяц — это на '+f(dd)+' ₽ больше текущего. Найти эту сумму сейчас проще, чем обнаружить нехватку в последний год.</div>'
+    : '<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">Цель закрывается с запасом.</b> Излишек — '+f(-gap)+' ₽. Раз в год пересчитывайте: цена цели растёт, взнос должен расти вместе с ней.</div>';
+  let rows='';
+  for(let y=1;y<=Math.min(n,40);y++){
+    if(n>8 && y%Math.ceil(n/8)!==0 && y!==Math.round(n)) continue;
+    const mm=Math.round(y*12);
+    const kk=rm>0?(Math.pow(1+rm,mm)-1)/rm:mm;
+    rows+='<tr><td>'+y+'</td><td>'+f(C*Math.pow(1+i,y))+' ₽</td><td>'+f(P*kk+S*Math.pow(1+r,y))+' ₽</td></tr>';
+  }
+  document.getElementById('tb').innerHTML=rows;
+  document.getElementById('res').classList.add('show');
+  document.getElementById('res').scrollIntoView({behavior:'smooth',block:'start'});
+}
+calc();
+
+</script>
+</body>
+</html>

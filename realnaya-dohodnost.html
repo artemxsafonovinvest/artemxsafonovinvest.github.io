@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор реальной доходности | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+.op{margin-bottom:9px}.op select{padding:11px 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>Сколько на самом деле приносят ваши деньги</h1>
+    <p>Считает годовую доходность с учётом дат взносов, а затем прогоняет её через комиссии, налог и инфляцию</p>
+  </div>
+
+  <div class="card">
+    <h2>1. Ваши операции</h2>
+    <p style="font-size:13.5px;color:#4b5563;margin-bottom:6px">Впишите каждое пополнение и снятие с датой. Внизу — сколько на счёте сейчас.</p>
+    <div id="ops"></div>
+    <button class="ghost" onclick="addOp()">+ Добавить операцию</button>
+    <div class="row" style="margin-top:14px">
+      <div>
+        <label>Сейчас на счёте, ₽</label>
+        <input id="now" type="text" inputmode="decimal" value="2 100 000">
+      </div>
+      <div>
+        <label>Дата оценки</label>
+        <input id="nowd" type="date">
+      </div>
+    </div>
+    <button onclick="calc()">Посчитать реальную доходность</button>
+  </div>
+
+  <div class="res" id="res">
+    <div class="big">
+      <div class="lbl">Ваша годовая доходность</div>
+      <div class="val" id="xirr">—</div>
+      <div class="note" id="xnote">—</div>
+    </div>
+    <div class="card">
+      <h2>2. Что от неё останется</h2>
+      <div class="row">
+        <div>
+          <label>Комиссии, %/год</label>
+          <input id="fee" type="text" inputmode="decimal" value="1,5" oninput="filters()">
+        </div>
+        <div>
+          <label>Налог с прибыли, %</label>
+          <input id="tax" type="text" inputmode="decimal" value="13" oninput="filters()">
+        </div>
+      </div>
+      <label>Инфляция, %/год</label>
+      <input id="infl" type="text" inputmode="decimal" value="9" oninput="filters()">
+      <div style="margin-top:14px">
+        <div class="line"><span>Грязная доходность</span><b id="s0">—</b></div>
+        <div class="line"><span>После комиссий</span><b id="s1">—</b></div>
+        <div class="line"><span>После налога</span><b id="s2">—</b></div>
+        <div class="line"><span>После инфляции — <b>ваш реальный результат</b></span><b id="s3">—</b></div>
+      </div>
+      <div id="ver"></div>
+    </div>
+    <div class="card">
+      <h2>Две ловушки, о которых стоит помнить</h2>
+      <div class="line"><span><b>Средняя доходность врёт.</b> +50% и −50% дают в среднем ноль, а по деньгам — минус четверть капитала. Смотрите результат по годам, а не среднее.</span></div>
+      <div class="line"><span><b>Ваши действия — четвёртый фильтр.</b> Продажа в панике и пропущенные взносы не попадают ни в один отчёт, но съедают больше, чем комиссии.</span></div>
+      <div class="warn"><b>Горизонт.</b> Расчёт за 2–3 года говорит больше про фазу рынка, чем про качество вашей стратегии. Выводы делают на 7–10 годах.</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Считаю такие вещи вслух в канале</h3>
+    <p>Разборы инструментов без обещаний доходности: механика, реальные цифры и риски.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Расчёт носит информационный характер и не является индивидуальной инвестиционной рекомендацией.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+let n=0;
+function addOp(date,sum,type){
+  n++;
+  const d=document.createElement('div');
+  d.className='op';
+  d.innerHTML='<div class="row"><div><input type="date" id="d'+n+'" value="'+(date||'')+'"></div>'+
+    '<div><input type="text" inputmode="decimal" id="v'+n+'" value="'+(sum||'')+'"></div>'+
+    '<div style="max-width:120px"><select id="t'+n+'"><option value="-1">внёс</option><option value="1"'+(type===1?' selected':'')+'>снял</option></select></div></div>';
+  document.getElementById('ops').appendChild(d);
+}
+function xirr(cfs){
+  const d0=cfs[0].d;
+  const npv=(r)=>cfs.reduce((s,c)=>s+c.v/Math.pow(1+r,(c.d-d0)/(365*86400000)),0);
+  let lo=-0.9999, hi=10;
+  if(npv(lo)*npv(hi)>0) return null;
+  for(let i=0;i<200;i++){const mid=(lo+hi)/2; if(npv(lo)*npv(mid)<=0) hi=mid; else lo=mid;}
+  return (lo+hi)/2;
+}
+let R=0;
+function calc(){
+  const cfs=[];
+  for(let i=1;i<=n;i++){
+    const de=document.getElementById('d'+i), ve=document.getElementById('v'+i);
+    if(!de||!de.value) continue;
+    const v=parseFloat(String(ve.value).replace(/\s/g,'').replace(',','.'));
+    if(!v) continue;
+    cfs.push({d:new Date(de.value).getTime(), v:v*parseFloat(document.getElementById('t'+i).value)});
+  }
+  const nd=document.getElementById('nowd').value;
+  const nv=num('now');
+  if(!nd||!nv||cfs.length===0){alert('Заполните хотя бы одну операцию и текущую сумму');return;}
+  cfs.push({d:new Date(nd).getTime(), v:nv});
+  cfs.sort((a,b)=>a.d-b.d);
+  const invested=cfs.filter(c=>c.v<0).reduce((s,c)=>s-c.v,0);
+  const withdrawn=cfs.filter(c=>c.v>0).reduce((s,c)=>s+c.v,0)-nv;
+  const r=xirr(cfs);
+  if(r===null){alert('Не удалось посчитать — проверьте даты и знаки операций');return;}
+  R=r*100;
+  document.getElementById('xirr').textContent=(R>=0?'+':'')+f1(R)+'% годовых';
+  const years=(cfs[cfs.length-1].d-cfs[0].d)/(365*86400000);
+  const naive=invested>0?((nv+withdrawn-invested)/invested*100):0;
+  document.getElementById('xnote').textContent='вложено '+f(invested)+' ₽ за '+f1(years)+' лет · «на глаз» получилось бы '+f1(naive)+'% за весь срок';
+  filters();
+  document.getElementById('res').classList.add('show');
+  document.getElementById('res').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function filters(){
+  const fee=num('fee'), tax=num('tax'), infl=num('infl');
+  const s1=R-fee;
+  const s2=s1>0?s1*(1-tax/100):s1;
+  const s3=((1+s2/100)/(1+infl/100)-1)*100;
+  const set=(id,v)=>{const e=document.getElementById(id);e.textContent=(v>=0?'+':'')+f1(v)+'%';e.className=v>=0?'g':'r';};
+  set('s0',R); set('s1',s1); set('s2',s2); set('s3',s3);
+  const v=document.getElementById('ver');
+  if(s3>=4) v.innerHTML='<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">Хороший результат.</b> Реальный рост '+f1(s3)+'% в год удваивает капитал примерно за '+Math.round(72/Math.max(s3,0.1))+' лет. Продолжайте.</div>';
+  else if(s3>=0) v.innerHTML='<div class="warn"><b>Вы почти в нуле по покупательной способности.</b> Капитал растёт, но цены съедают почти весь рост. Стоит сравнить с обычным вкладом за тот же период и решить, оправдан ли риск.</div>';
+  else v.innerHTML='<div class="warn" style="border-color:#dc2626;background:rgba(220,38,38,.07)"><b style="color:#dc2626">Реальная доходность отрицательная.</b> Деньги росли медленнее цен. Это не приговор инструменту — но повод честно посмотреть, за какой риск вы платили.</div>';
+}
+(function init(){
+  const t=new Date(); document.getElementById('nowd').value=t.toISOString().slice(0,10);
+  const y=t.getFullYear();
+  addOp((y-3)+'-01-15','600 000');
+  addOp((y-2)+'-01-15','600 000');
+  addOp((y-1)+'-01-15','600 000');
+})();
+
+</script>
+</body>
+</html>

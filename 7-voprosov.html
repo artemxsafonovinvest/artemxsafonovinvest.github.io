@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чек-лист: 7 вопросов консультанту | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+
+.q .qnum{font-size:11.5px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:600;margin-bottom:6px}
+.ans{font-size:13.5px;padding:11px 13px;border-radius:0 8px 8px 0;margin-top:9px;color:#374151}
+.ans.ok{background:rgba(5,150,105,.08);border-left:3px solid var(--green)}
+.ans.ok b{color:var(--green)}
+.ans.bad{background:rgba(220,38,38,.07);border-left:3px solid var(--red)}
+.ans.bad b{color:var(--red)}
+.marks{display:flex;gap:9px;margin-top:13px}
+.mk{margin:0;padding:10px;font-size:13px;border-radius:8px;background:#f3f4f6;color:var(--muted);font-weight:600}
+.mk.g.on{background:rgba(5,150,105,.15);color:var(--green)}
+.mk.r.on{background:rgba(220,38,38,.13);color:var(--red)}
+@media print{.cta,.marks,button{display:none}body{background:#fff}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>7 вопросов человеку, который советует вам, куда вложить деньги</h1>
+    <p>Задайте их до того, как переведёте первый рубль. С расшифровкой, что означает каждый уклончивый ответ</p>
+  </div>
+
+  <div class="card">
+    <h2>Как пользоваться</h2>
+    <p style="font-size:14px;color:#4b5563">Задайте эти семь вопросов любому, кто советует вам, куда вложить деньги — консультанту, агенту, знакомому «который разбирается». Отмечайте ответы кнопками, внизу увидите итог.</p>
+    <p style="font-size:14px;color:#4b5563;margin-top:10px">Нормальный специалист отвечает на все семь спокойно. Дискомфорт от самих вопросов — уже ответ.</p>
+  </div>
+
+  <div class="card q" id="q1">
+    <div class="qnum">Вопрос 1</div>
+    <h2>Как именно вы зарабатываете на моём решении?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Называет схему прямо: комиссия от продукта, фиксированная плата за работу или процент от результата. Может назвать порядок цифры.</div>
+    <div class="ans bad"><b>Красный флаг.</b> «Это неважно», «мне платит компания, вам ничего», перевод темы на выгоду продукта.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(1,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(1,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card q" id="q2">
+    <div class="qnum">Вопрос 2</div>
+    <h2>Сколько вы получите, если я оформлю это, — и сколько, если не оформлю?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Спокойно объясняет разницу. Признаёт, что заинтересован, и говорит, чем интерес уравновешен.</div>
+    <div class="ans bad"><b>Красный флаг.</b> Раздражение от вопроса. «Я работаю за идею». Отказ отвечать.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(2,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(2,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card q" id="q3">
+    <div class="qnum">Вопрос 3</div>
+    <h2>Что произойдёт лично с вами, если через три года мой результат окажется плохим?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Честно: «репутационно потеряю», «вы уйдёте», «я держу тут свои деньги и потеряю вместе с вами».</div>
+    <div class="ans bad"><b>Красный флаг.</b> «Такого не будет». Любое обещание, что плохого сценария не существует.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(3,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(3,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card q" id="q4">
+    <div class="qnum">Вопрос 4</div>
+    <h2>Держите ли вы сами деньги в этом инструменте? Какую долю капитала?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Конкретика: да/нет, какая доля, почему именно столько. Готов говорить и о своих убытках.</div>
+    <div class="ans bad"><b>Красный флаг.</b> «Конечно, всё вложил!» без деталей — самая лёгкая фраза, чтобы соврать.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(4,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(4,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card q" id="q5">
+    <div class="qnum">Вопрос 5</div>
+    <h2>Кому этот продукт НЕ подходит?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Называет минимум два-три профиля людей, которым брать не стоит, и объясняет почему.</div>
+    <div class="ans bad"><b>Красный флаг.</b> «Подходит всем». Значит, человек либо не разбирается, либо не собирается говорить правду.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(5,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(5,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card q" id="q6">
+    <div class="qnum">Вопрос 6</div>
+    <h2>Какой у меня худший сценарий в цифрах — сколько я потеряю и при каких условиях?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Даёт диапазон и условия: при таком-то падении рынка вы потеряете столько-то.</div>
+    <div class="ans bad"><b>Красный флаг.</b> «Риска нет», «капитал защищён» без объяснения, за счёт чего именно.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(6,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(6,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card q" id="q7">
+    <div class="qnum">Вопрос 7</div>
+    <h2>Что будет, если я захочу выйти раньше срока, и сколько это будет стоить?</h2>
+    <div class="ans ok"><b>Нормальный ответ.</b> Точные цифры и сроки: через год вернётся столько, через три — столько, штраф такой-то.</div>
+    <div class="ans bad"><b>Красный флаг.</b> Уход от ответа или «ну вы же не собираетесь выходить». Здесь спрятана вся правда о продукте.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(7,1)">Ответил нормально</button>
+      <button class="mk r" onclick="mark(7,0)">Ушёл от ответа</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Итог</h2>
+    <div class="big" style="margin-bottom:8px">
+      <div class="lbl">Нормальных ответов</div>
+      <div class="val" id="score">0 / 7</div>
+      <div class="note" id="verdict">Отметьте ответы выше</div>
+    </div>
+    <button class="ghost" onclick="window.print()">Распечатать или сохранить в PDF</button>
+    <button class="ghost" onclick="reset()">Сбросить</button>
+  </div>
+  <div class="card">
+    <h2>Три правила поверх списка</h2>
+    <div class="line"><span><b>Спешка — всегда флаг.</b> Любое нормальное финансовое решение переживает паузу в три дня.</span></div>
+    <div class="line"><span><b>Обещанной доходности не существует.</b> Есть диапазон и вероятность, всё остальное — реклама.</span></div>
+    <div class="line"><span><b>Бесплатный совет дороже платного.</b> Он оплачен — просто не вами и не деньгами.</span></div>
+  </div>
+
+  <div class="cta">
+    <h3>Разбираю продукты честно — включая комиссии</h3>
+    <p>В канале показываю, как устроены реальные финансовые продукты и где в них зашито вознаграждение посредника.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Материал носит информационный характер и не является индивидуальной инвестиционной рекомендацией.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+const st={};
+function mark(i,v){st[i]=v;
+  const c=document.getElementById('q'+i);
+  const b=c.querySelectorAll('.mk');
+  b[0].classList.toggle('on',v===1);
+  b[1].classList.toggle('on',v===0);
+  upd();}
+function upd(){
+  const vals=Object.values(st);
+  const good=vals.filter(x=>x===1).length;
+  document.getElementById('score').textContent=good+' / 7';
+  const v=document.getElementById('verdict');
+  if(vals.length<7){v.textContent='Отмечено '+vals.length+' из 7 вопросов';return;}
+  if(good===7) v.textContent='Все ответы получены. Это не гарантия компетентности, но обмана здесь ждать не стоит.';
+  else if(good>=5) v.textContent='В целом нормально. Вернитесь к тем вопросам, где ответа не было, — именно там обычно спрятана цена.';
+  else if(good>=3) v.textContent='Половина вопросов без ответа. Не отдавайте деньги, пока не закроете каждый.';
+  else v.textContent='Ответов почти нет. Это не консультация, это продажа.';
+}
+function reset(){for(const k in st)delete st[k];
+  document.querySelectorAll('.mk').forEach(b=>b.classList.remove('on'));upd();}
+
+</script>
+</body>
+</html>

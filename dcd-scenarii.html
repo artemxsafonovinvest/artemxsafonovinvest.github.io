@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор бивалютной сделки | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>Три сценария бивалютной сделки</h1>
+    <p>Считает, что вы получите, если цена не дошла, дошла или провалилась ниже вашей</p>
+  </div>
+
+  <div class="card">
+    <h2>Параметры сделки</h2>
+    <div class="row">
+      <div><label>Сумма, $</label><input id="sum" type="text" inputmode="decimal" value="10 000"></div>
+      <div><label>Цена актива сейчас, $</label><input id="spot" type="text" inputmode="decimal" value="100 000"></div>
+    </div>
+    <div class="row">
+      <div><label>Ваша цена покупки, $ <span>страйк</span></label><input id="strike" type="text" inputmode="decimal" value="92 000"></div>
+      <div><label>Срок, дней</label><input id="days" type="text" inputmode="decimal" value="7"></div>
+    </div>
+    <div class="row">
+      <div><label>Премия за срок, %</label><input id="prem" type="text" inputmode="decimal" value="0,7"></div>
+      <div><label>Плохой сценарий: цена упала до, $</label><input id="bad" type="text" inputmode="decimal" value="85 000"></div>
+    </div>
+    <button onclick="calc()">Посчитать три сценария</button>
+  </div>
+
+  <div class="res" id="res">
+    <div class="big">
+      <div class="lbl">Премия сразу на счёт</div>
+      <div class="val" id="premv">—</div>
+      <div class="note" id="premn">—</div>
+    </div>
+
+    <div class="card">
+      <h2>Сценарий А — цена не дошла до вашей</h2>
+      <div class="line"><span>Покупки нет, остаётесь в деньгах</span><b class="g" id="a1">—</b></div>
+      <div class="line"><span>Итог на счёте</span><b id="a2">—</b></div>
+      <div class="line"><span>Можно повторить сделку</span><span class="tag g">лучший исход</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Сценарий Б — цена дошла, вы купили</h2>
+      <div class="line"><span>Куплено актива</span><b id="b1">—</b></div>
+      <div class="line"><span>Средняя цена входа с учётом премии</span><b class="g" id="b2">—</b></div>
+      <div class="line"><span>Это ниже рынка на момент сделки на</span><b id="b3">—</b></div>
+      <div class="line"><span>Итог, если рынок стоит на страйке</span><b id="b4">—</b></div>
+    </div>
+
+    <div class="card">
+      <h2>Сценарий В — цена провалилась ниже</h2>
+      <div class="line"><span>Вы всё равно покупаете по страйку</span><b id="c1">—</b></div>
+      <div class="line"><span>Рыночная стоимость купленного</span><b id="c2">—</b></div>
+      <div class="line"><span>Результат с учётом премии</span><b id="c3">—</b></div>
+      <div class="line"><span>Точка безубытка</span><b id="c4">—</b></div>
+      <div class="warn"><b>Это главный сценарий, который нужно принять до входа.</b> Ваш риск здесь такой же, как у любого держателя актива, а прибыль ограничена премией. Заходите только по цене, по которой действительно готовы купить и держать.</div>
+    </div>
+
+    <div class="card">
+      <h2>Про «сколько это годовых»</h2>
+      <div class="line"><span>Если повторять с тем же результатом</span><b id="apy">—</b></div>
+      <div class="warn"><b>Так считать нельзя.</b> Часть сделок будет исполняться, часть капитала — висеть в позициях, а в стрессовом рынке вход может быть невозможен. Реальная доходность всегда заметно ниже этой арифметики. Цифра приведена только чтобы вы узнавали её в чужой рекламе.</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Показываю свои сделки в канале</h3>
+    <p>И удачные, и зависшие — вместе с тем, как я их веду. Без обещаний доходности.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Не является индивидуальной инвестиционной рекомендацией. Операции с цифровыми активами связаны с риском потери капитала.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+function calc(){
+  const S=num('sum'), spot=num('spot'), K=num('strike'), d=num('days'), p=num('prem')/100, bad=num('bad');
+  if(!S||!K||!d){alert('Заполните сумму, страйк и срок');return;}
+  const prem=S*p;
+  const units=S/K;
+  const be=K*(1-p);
+  document.getElementById('premv').textContent='+ $'+f(prem);
+  document.getElementById('premn').textContent=f2(p*100)+'% за '+f(d)+' дн. · получаете в обоих исходах';
+  document.getElementById('a1').textContent='+ $'+f(prem);
+  document.getElementById('a2').textContent='$'+f(S+prem);
+  document.getElementById('b1').textContent=f2(units)+' ед. по $'+f(K);
+  document.getElementById('b2').textContent='$'+f(be);
+  document.getElementById('b3').textContent=f1((1-K/spot)*100)+'%';
+  document.getElementById('b4').textContent='$'+f(units*K+prem);
+  const val=units*bad;
+  const res=val+prem-S;
+  document.getElementById('c1').textContent='$'+f(K)+' за единицу';
+  document.getElementById('c2').textContent='$'+f(val);
+  const c3=document.getElementById('c3');
+  c3.textContent=(res>=0?'+':'−')+'$'+f(Math.abs(res))+' ('+f1(res/S*100)+'%)';
+  c3.className=res>=0?'g':'r';
+  document.getElementById('c4').textContent='$'+f(be)+' — ниже уходите в минус';
+  document.getElementById('apy').textContent=f1((Math.pow(1+p,365/d)-1)*100)+'% годовых';
+  document.getElementById('res').classList.add('show');
+  document.getElementById('res').scrollIntoView({behavior:'smooth',block:'start'});
+}
+calc();
+
+</script>
+</body>
+</html>
