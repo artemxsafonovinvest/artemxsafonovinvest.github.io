@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор налогового вычета по страховым программам | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>Сколько вернёт государство: НСЖ, ИИС-3, ДСЖ</h1>
+    <p>Три вычета с разными лимитами. Вводите доход и взносы, получаете возврат за год и за срок с учётом вашей ставки НДФЛ и потолка по уплаченному налогу.</p>
+  </div>
+
+  <div class="card">
+    <h2>Ваши цифры</h2>
+    <label>Официальный доход за год, ₽ <span>до вычета НДФЛ</span></label>
+    <input id="inc" type="text" inputmode="decimal" value="1 800 000">
+    <div class="row">
+      <div><label>Взнос по НСЖ в год, ₽ <span>договор от 5 лет</span></label><input id="nsj" type="text" inputmode="decimal" value="120 000"></div>
+      <div><label>Другие соцрасходы в год, ₽ <span>лечение, обучение, спорт</span></label><input id="soc" type="text" inputmode="decimal" value="0"></div>
+    </div>
+    <div class="row">
+      <div><label>Взнос ИИС-3 или ПДС в год, ₽</label><input id="iis" type="text" inputmode="decimal" value="0"></div>
+      <div><label>Взнос ДСЖ «Эволюция» в год, ₽</label><input id="dsj" type="text" inputmode="decimal" value="0"></div>
+    </div>
+    <label>Срок, лет</label>
+    <input id="y" type="text" inputmode="decimal" value="10">
+    <button onclick="calc()">Посчитать</button>
+  </div>
+
+  <div class="res" id="res">
+    <div class="big">
+      <div class="lbl">Государство вернёт за год</div>
+      <div class="val" id="tot">—</div>
+      <div class="note" id="totn">—</div>
+    </div>
+    <div class="card">
+      <h2>Как это складывается</h2>
+      <div class="line"><span>Ваша ставка НДФЛ</span><b id="rate">—</b></div>
+      <div class="line"><span>НДФЛ уплачено за год <span style="color:#6b7280;font-size:12px">потолок возврата</span></span><b id="tax">—</b></div>
+      <div class="line"><span>НСЖ: принято к вычету <span style="color:#6b7280;font-size:12px">лимит 150 000 ₽ на все соцрасходы</span></span><b id="d1">—</b></div>
+      <div class="line"><span>НСЖ: возврат</span><b id="r1" class="g">—</b></div>
+      <div class="line"><span>ИИС-3 / ПДС / ДСЖ: принято к вычету <span style="color:#6b7280;font-size:12px">общий лимит 400 000 ₽</span></span><b id="d2">—</b></div>
+      <div class="line"><span>ИИС-3 / ПДС / ДСЖ: возврат</span><b id="r2" class="g">—</b></div>
+      <div class="line"><span>Итого за <span id="yy"></span> лет</span><b id="ry" class="g">—</b></div>
+      <div id="warns"></div>
+    </div>
+    <div class="card">
+      <h2>Сколько даёт 400 000 ₽ при разной ставке</h2>
+      <table><thead><tr><th>Ставка</th><th>Доход в год</th><th>Возврат</th></tr></thead><tbody>
+        <tr><td>13 %</td><td>до 2,4 млн</td><td>52 000 ₽</td></tr>
+        <tr><td>15 %</td><td>2,4–5 млн</td><td>60 000 ₽</td></tr>
+        <tr><td>18 %</td><td>5–20 млн</td><td>72 000 ₽</td></tr>
+        <tr><td>20 %</td><td>20–50 млн</td><td>80 000 ₽</td></tr>
+        <tr><td>22 %</td><td>выше 50 млн</td><td>88 000 ₽</td></tr>
+      </tbody></table>
+      <div class="warn"><b>«До 88 000 ₽» это потолок для ставки 22 %.</b> Смотрите на свою строку, а не на рекламу. Плюс к любой строке: соцвычет по НСЖ, до 19 500 ₽ при 13 %.</div>
+    </div>
+    <div class="card">
+      <h2>Три вещи, о которых забывают</h2>
+      <div class="line"><span><b>Вернуть можно за три прошлых года.</b> Если НСЖ есть с 2023-го и вы не подавали, вам положены три возврата прямо сейчас.</span></div>
+      <div class="line"><span><b>Лимиты личные.</b> У мужа и жены по своим 150 000 и 400 000. Семья из двух работающих удваивает возврат.</span></div>
+      <div class="line"><span><b>Досрочный выход возвращает вычет государству.</b> Расторгли договор раньше срока, страховщик удержит НДФЛ с взносов, по которым вычет был получен.</span></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Разбираю вычеты на живых примерах</h3>
+    <p>В канале показываю, как совмещать НСЖ, ИИС и «Эволюцию», чтобы забирать максимум каждый год.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Расчёт по ст. 219 и 219.2 НК РФ и прогрессивной шкале НДФЛ 2025 года. Условия по срокам договоров и порядок получения проверяйте на дату оформления. Не является индивидуальной инвестиционной или налоговой рекомендацией.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+const BR=[[2400000,.13],[5000000,.15],[20000000,.18],[50000000,.20],[Infinity,.22]];
+function tax(x){let t=0,prev=0;for(const [lim,r] of BR){if(x<=prev)break;t+=(Math.min(x,lim)-prev)*r;prev=lim;}return t;}
+function mrate(x){for(const [lim,r] of BR){if(x<=lim)return r;}return .22;}
+function calc(){
+  const inc=num('inc'),nsj=num('nsj'),soc=num('soc'),iis=num('iis'),dsj=num('dsj'),Y=Math.max(1,Math.round(num('y')));
+  const lim1=Math.max(0,150000-soc); const d1=Math.min(nsj,lim1);
+  const d2=Math.min(iis+dsj,400000);
+  const T=tax(inc);
+  const r1=tax(inc)-tax(Math.max(0,inc-d1));
+  const r2=tax(Math.max(0,inc-d1))-tax(Math.max(0,inc-d1-d2));
+  const tot=r1+r2;
+  document.getElementById('tot').textContent=f(tot)+' ₽';
+  document.getElementById('totn').textContent=tot>0?('это '+f1(tot/Math.max(1,nsj+iis+dsj)*100)+' % от ваших взносов '+f(nsj+iis+dsj)+' ₽'):'при таких данных возврата нет';
+  document.getElementById('rate').textContent=Math.round(mrate(inc)*100)+' %';
+  document.getElementById('tax').textContent=f(T)+' ₽';
+  document.getElementById('d1').textContent=f(d1)+' ₽'+(nsj>lim1?' из '+f(nsj):'');
+  document.getElementById('r1').textContent='+'+f(r1)+' ₽';
+  document.getElementById('d2').textContent=f(d2)+' ₽'+(iis+dsj>400000?' из '+f(iis+dsj):'');
+  document.getElementById('r2').textContent='+'+f(r2)+' ₽';
+  document.getElementById('yy').textContent=Y;
+  document.getElementById('ry').textContent='+'+f(tot*Y)+' ₽';
+  let w='';
+  if(inc<=0) w+='<div class="warn" style="border-color:#dc2626;background:rgba(220,38,38,.07)"><b style="color:#dc2626">Нет НДФЛ, нет вычета.</b> Самозанятые и ИП на упрощёнке под эти вычеты не попадают. Выход: оформить договор на супруга с официальной зарплатой.</div>';
+  if(inc>0&&tot>0&&tot>=T-1) w+='<div class="warn"><b>Возврат упёрся в уплаченный НДФЛ.</b> Больше '+f(T)+' ₽ за год вернуть нельзя, сколько бы вы ни внесли. Лишние взносы вычета не дают.</div>';
+  if(nsj>lim1) w+='<div class="warn"><b>Взнос по НСЖ выше лимита.</b> К вычету принято '+f(d1)+' ₽, остальные '+f(nsj-d1)+' ₽ возврата не дают. Часть взноса можно оформить на супруга.</div>';
+  if(iis+dsj>400000) w+='<div class="warn"><b>ИИС-3, ПДС и ДСЖ делят один лимит 400 000 ₽.</b> Сверх него '+f(iis+dsj-400000)+' ₽ вычета не дают.</div>';
+  document.getElementById('warns').innerHTML=w;
+  document.getElementById('res').classList.add('show');
+}
+document.querySelectorAll('input').forEach(e=>e.addEventListener('change',calc));
+calc();
+
+</script>
+</body>
+</html>

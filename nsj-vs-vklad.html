@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вклад против НСЖ на 10 лет | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.two .big{margin-bottom:0;padding:16px 10px}
+.two .big .val{font-size:clamp(19px,5vw,26px)}
+@media(max-width:380px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>Вклад против НСЖ: считаем на ваших цифрах</h1>
+    <p>Одна и та же сумма в месяц двумя способами: накопление, инфляция, возврат налога и что получит семья в худшем сценарии. Допущения редактируются, цифры ваши.</p>
+  </div>
+
+  <div class="card">
+    <h2>Ваши цифры</h2>
+    <div class="row">
+      <div><label>Сумма в месяц, ₽</label><input id="m" type="text" inputmode="decimal" value="10 000"></div>
+      <div><label>Срок, лет</label><input id="y" type="text" inputmode="decimal" value="10"></div>
+    </div>
+    <div class="row">
+      <div><label>Ставка вклада, %/год <span>средняя за срок</span></label><input id="r" type="text" inputmode="decimal" value="8"></div>
+      <div><label>Инфляция, %/год</label><input id="inf" type="text" inputmode="decimal" value="7"></div>
+    </div>
+    <div class="row">
+      <div><label>Доп. доход НСЖ, %/год <span>не гарантирован</span></label><input id="g" type="text" inputmode="decimal" value="4"></div>
+      <div><label>Ставка НДФЛ</label><select id="t"><option value="13">13 %</option><option value="15">15 %</option><option value="18">18 %</option><option value="20">20 %</option><option value="22">22 %</option></select></div>
+    </div>
+    <label>Худший сценарий на году № <span>что получит семья</span></label>
+    <input id="k" type="text" inputmode="decimal" value="3">
+    <button onclick="calc()">Посчитать</button>
+  </div>
+
+  <div class="res" id="res">
+    <div class="two">
+      <div class="big"><div class="lbl">Вклад через <span id="yy1"></span> лет</div><div class="val" id="dep">—</div><div class="note">ничего не гарантировано</div></div>
+      <div class="big"><div class="lbl">НСЖ через <span id="yy2"></span> лет</div><div class="val" id="nsj">—</div><div class="note" id="nsjn">—</div></div>
+    </div>
+    <div class="card">
+      <h2>Что внутри цифр</h2>
+      <div class="line"><span>Внесено за весь срок</span><b id="c">—</b></div>
+      <div class="line"><span>Вклад: заработано сверх взносов</span><b id="dpr" class="g">—</b></div>
+      <div class="line"><span>Вклад: покупательная способность в сегодняшних деньгах</span><b id="dreal">—</b></div>
+      <div class="line"><span>Вклад: реальная доходность над инфляцией</span><b id="rreal">—</b></div>
+      <div class="line"><span>НСЖ: гарантировано договором</span><b id="gar">—</b></div>
+      <div class="line"><span>НСЖ: дополнительный доход (не гарантирован)</span><b id="add">—</b></div>
+      <div class="line"><span>НСЖ: возврат налога за срок</span><b id="ded" class="g">—</b></div>
+      <div id="verd"></div>
+    </div>
+    <div class="card">
+      <h2>Худший сценарий: семья на <span id="kk"></span>-м году</h2>
+      <div class="line"><span>Вклад: то, что успело накопиться, через 6 месяцев наследства</span><b id="fdep" class="r">—</b></div>
+      <div class="line"><span>НСЖ: страховая сумма выгодоприобретателю, обычно в течение месяца</span><b id="fnsj" class="g">—</b></div>
+      <div class="line"><span>Разница для семьи</span><b id="fdiff">—</b></div>
+      <div class="warn"><b>При потере трудоспособности</b> по большинству программ компания продолжает платить взносы за вас, договор доживает до конца. На вкладе взносы просто прекращаются.</div>
+    </div>
+    <div class="card">
+      <h2>По годам</h2>
+      <table><thead><tr><th>Год</th><th>На вкладе</th><th>Семья: вклад</th><th>Семья: НСЖ</th></tr></thead><tbody id="tb"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>Где теряют</h2>
+      <div class="line"><span><b>На вкладе:</b> десять переоформлений и десять соблазнов снять; ставка падает вместе с ключевой; семья получает остаток, а не капитал.</span></div>
+      <div class="line"><span><b>На НСЖ:</b> досрочный выход в первые годы дороже взносов; гарантированная сумма не индексируется на инфляцию; это не инструмент для роста.</span></div>
+      <div class="line"><span><b>Общее правило:</b> подушка на 3–6 месяцев лежит на вкладе. Длинные деньги, которые нельзя потерять, в защищённом контуре. Это разные ящики, а не конкуренты.</span></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>Считаю такие сценарии вслух на эфирах</h3>
+    <p>В канале разбираю, где именно теряют на вкладе и на страховой программе, и показываю линейку от 1 000 ₽ в месяц.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Расчёт иллюстративный. Гарантированная сумма, дополнительный доход и опции зависят от условий конкретной программы. Возврат налога по ст. 219 НК РФ: лимит 150 000 ₽ взносов в год, не больше уплаченного НДФЛ. Не является индивидуальной инвестиционной рекомендацией.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+function fv(m,rate,n){const i=rate/12;return i===0?m*n:m*((Math.pow(1+i,n)-1)/i);}
+function calc(){
+  const m=num('m'),Y=Math.max(1,Math.round(num('y'))),r=num('r')/100,inf=num('inf')/100,g=num('g')/100,t=num('t')/100;
+  let k=Math.round(num('k')); if(k<1)k=1; if(k>Y)k=Y;
+  if(!m){alert('Введите сумму в месяц');return;}
+  const N=12*Y, C=m*N, A=12*m;
+  const dep=fv(m,r,N);
+  const dreal=dep/Math.pow(1+inf,Y);
+  const rreal=(1+r)/(1+inf)-1;
+  const acc=g===0?C:A*((Math.pow(1+g,Y)-1)/g);
+  const add=acc-C;
+  const dedY=Math.min(A,150000)*t, ded=dedY*Y;
+  const nsj=acc+ded;
+  document.getElementById('yy1').textContent=Y; document.getElementById('yy2').textContent=Y; document.getElementById('kk').textContent=k;
+  document.getElementById('dep').textContent=f(dep)+' ₽';
+  document.getElementById('nsj').textContent=f(nsj)+' ₽';
+  document.getElementById('nsjn').textContent='из них гарантировано '+f(C)+' ₽ + возврат '+f(ded)+' ₽';
+  document.getElementById('c').textContent=f(C)+' ₽';
+  document.getElementById('dpr').textContent='+'+f(dep-C)+' ₽';
+  document.getElementById('dreal').textContent='≈ '+f(dreal)+' ₽';
+  const rr=document.getElementById('rreal'); rr.textContent=(rreal>=0?'+':'')+f1(rreal*100)+' % в год'; rr.className=rreal>0.02?'g':(rreal>=0?'o':'r');
+  document.getElementById('gar').textContent=f(C)+' ₽';
+  document.getElementById('add').textContent='+'+f(add)+' ₽';
+  document.getElementById('ded').textContent='+'+f(ded)+' ₽ ('+f(dedY)+' ₽ в год)';
+  const v=document.getElementById('verd'); const diff=dep-nsj;
+  if(diff>0){
+    v.innerHTML='<div class="warn"><b>При хорошем сценарии вклад приносит на '+f(diff)+' ₽ больше.</b> Это цена защиты: '+f(diff/Y)+' ₽ в год, '+f(diff/N)+' ₽ в месяц. За неё вы покупаете '+f(C)+' ₽ для семьи с первого взноса, освобождение от взносов при инвалидности и договор, из которого нельзя выйти по настроению. Стоит ли защита этих денег, решаете вы, но решать нужно, зная цифру.</div>';
+  } else {
+    v.innerHTML='<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">При этих допущениях НСЖ обгоняет вклад на '+f(-diff)+' ₽</b> ещё до учёта защиты семьи. Проверьте ставку вклада: если она ниже доп. дохода плюс возврата налога, вклад проигрывает на любом сроке.</div>';
+  }
+  const fdep=fv(m,r,12*k); const fnsj=C;
+  document.getElementById('fdep').textContent=f(fdep)+' ₽';
+  document.getElementById('fnsj').textContent=f(fnsj)+' ₽';
+  document.getElementById('fdiff').textContent='в '+f1(fnsj/Math.max(fdep,1))+' раза';
+  let rows='';
+  for(let yr=1;yr<=Y;yr++){const d=fv(m,r,12*yr);rows+='<tr'+(yr===k?' style="background:rgba(201,168,76,.12)"':'')+'><td>'+yr+'</td><td>'+f(d)+'</td><td class="r">'+f(d)+'</td><td class="g">'+f(C)+'</td></tr>';}
+  document.getElementById('tb').innerHTML=rows;
+  document.getElementById('res').classList.add('show');
+}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('change',calc));
+calc();
+
+</script>
+</body>
+</html>

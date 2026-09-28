@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5 признаков, что ваш капитал не защищён | Артём Сафонов</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1f3d;--navy2:#16213e;--gold:#c9a84c;--gold-light:#e8c97a;--cream:#f8f5ef;--white:#fff;--text:#1a1a2e;--muted:#6b7280;--green:#059669;--red:#dc2626;--orange:#f97316;--line:rgba(15,31,61,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,Arial,sans-serif;background:var(--cream);color:var(--text);padding:16px;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto}
+.head{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:18px}
+.head .brand{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold-light)}
+.head .brand-sub{font-size:11px;color:rgba(232,201,122,.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.head h1{font-family:'Playfair Display',serif;font-size:clamp(21px,4.5vw,29px);line-height:1.25;margin-bottom:8px}
+.head p{font-size:13.5px;color:#b8c4d9}
+.card{background:var(--white);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(15,31,61,.07)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:12px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px;color:var(--navy)}
+label span{font-weight:400;color:var(--muted);font-size:12px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:16px;font-family:inherit;background:#fcfcfa;color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:var(--gold-light);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+button:active{transform:scale(.99)}
+button.ghost{background:transparent;border:1.5px solid var(--line);color:var(--navy);margin-top:8px}
+.res{display:none}
+.res.show{display:block}
+.big{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.big .lbl{font-size:12px;color:#9fb0c9;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.big .val{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,36px);font-weight:700;color:var(--gold-light)}
+.big .note{font-size:12.5px;color:#b8c4d9;margin-top:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:12px}
+.line:last-child{border:none}
+.line b{font-size:15.5px;white-space:nowrap}
+.g{color:var(--green)}.r{color:var(--red)}.o{color:var(--orange)}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.g{background:rgba(5,150,105,.12);color:var(--green)}
+.tag.o{background:rgba(249,115,22,.14);color:var(--orange)}
+.tag.r{background:rgba(220,38,38,.12);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 6px;border-bottom:1.5px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:none}
+.warn{background:rgba(249,115,22,.08);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.warn b{color:var(--orange)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-top:18px}
+.cta h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-light);margin-bottom:8px}
+.cta p{font-size:13.5px;color:#b8c4d9;margin-bottom:16px}
+.cta a{display:block;padding:13px;background:var(--gold);color:var(--navy);text-decoration:none;border-radius:10px;font-weight:700;font-size:15px}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:18px 10px 6px}
+
+.q .qnum{font-size:11.5px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:600;margin-bottom:6px}
+.ans{font-size:13.5px;padding:11px 13px;border-radius:0 8px 8px 0;margin-top:9px;color:#374151}
+.ans.ok{background:rgba(5,150,105,.08);border-left:3px solid var(--green)}
+.ans.ok b{color:var(--green)}
+.ans.bad{background:rgba(220,38,38,.07);border-left:3px solid var(--red)}
+.ans.bad b{color:var(--red)}
+.marks{display:flex;gap:9px;margin-top:13px}
+.mk{margin:0;padding:10px;font-size:13px;border-radius:8px;background:#f3f4f6;color:var(--muted);font-weight:600}
+.mk.g.on{background:rgba(5,150,105,.15);color:var(--green)}
+.mk.r.on{background:rgba(220,38,38,.13);color:var(--red)}
+@media print{.cta,.marks,button{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">Артём Сафонов</div>
+    <div class="brand-sub">Архитектор капитала</div>
+    <h1>5 признаков, что ваш капитал не защищён</h1>
+    <p>Не про доходность. Про то, что получит семья, когда и через что. Отметьте, что про вас, и увидите, с чего начать</p>
+  </div>
+
+  <div class="card">
+    <h2>Как пользоваться</h2>
+    <p style="font-size:14px;color:#4b5563">Пять признаков, что капитал не защищён. Не про доходность, а про то, что получит семья и когда. Отметьте, что из этого про вас, внизу увидите итог и что делать первым.</p>
+    <p style="font-size:14px;color:#4b5563;margin-top:10px">Десять минут. У большинства моих клиентов на первой встрече отмечены три из пяти.</p>
+  </div>
+  <div class="card q" id="q1">
+    <div class="qnum">Признак 1</div>
+    <h2>В договорах страхования жизни не назначен выгодоприобретатель</h2>
+    <div class="ans bad"><b>Что это значит.</b> Без названного человека выплата идёт наследникам по закону: шесть месяцев ожидания, нотариус, раздел между всеми. Главное преимущество программы просто не работает.</div>
+    <div class="ans ok"><b>Что сделать.</b> Откройте полис. Если графа пустая, напишите в страховую заявление: назначить выгодоприобретателя и подназначить второго на случай, если первого не станет раньше.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(1,0)">Назначен и подназначен второй</button>
+      <button class="mk r" onclick="mark(1,1)">Пусто, или не знаю</button>
+    </div>
+  </div>
+  <div class="card q" id="q2">
+    <div class="qnum">Признак 2</div>
+    <h2>Вы не знаете, кому по закону достанется вклад и счета</h2>
+    <div class="ans bad"><b>Что это значит.</b> Наследники первой очереди это супруг, дети и родители, включая детей от прошлых браков. Все получают равные доли, если нет завещания. Семья узнаёт об этом у нотариуса.</div>
+    <div class="ans ok"><b>Что сделать.</b> Выпишите список наследников первой очереди. Если он вас не устраивает, это решает завещание, а не надежда.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(2,0)">Знаю список и он меня устраивает</button>
+      <button class="mk r" onclick="mark(2,1)">Не знаю или не устраивает</button>
+    </div>
+  </div>
+  <div class="card q" id="q3">
+    <div class="qnum">Признак 3</div>
+    <h2>Нет завещания</h2>
+    <div class="ans bad"><b>Что это значит.</b> Без завещания работает только закон: равные доли всем наследникам первой очереди, спорные активы зависают, бизнес и крипта часто теряются.</div>
+    <div class="ans ok"><b>Что сделать.</b> Завещание у нотариуса оформляется за час. Страховая программа его дополняет, а не заменяет.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(3,0)">Есть завещание</button>
+      <button class="mk r" onclick="mark(3,1)">Нет</button>
+    </div>
+  </div>
+  <div class="card q" id="q4">
+    <div class="qnum">Признак 4</div>
+    <h2>Источник взносов и режим прав по договорам в браке не зафиксирован</h2>
+    <div class="ans bad"><b>Что это значит.</b> Если взносы платились из общих семейных денег, суд при разводе может признать выкупную сумму по договору общим имуществом и учесть при разделе.</div>
+    <div class="ans ok"><b>Что сделать.</b> Зафиксируйте, из каких денег платятся взносы, и режим прав по договору в брачном договоре. Это защищает обоих супругов.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(4,0)">Зафиксирован, или я не в браке</button>
+      <button class="mk r" onclick="mark(4,1)">Не зафиксирован</button>
+    </div>
+  </div>
+  <div class="card q" id="q5">
+    <div class="qnum">Признак 5</div>
+    <h2>Семья не продержится 6 месяцев без вашего дохода</h2>
+    <div class="ans bad"><b>Что это значит.</b> Ровно столько идёт вступление в наследство. Всё это время счета и вклады заблокированы, а расходы семьи продолжаются. Это самый дорогой из пяти признаков.</div>
+    <div class="ans ok"><b>Что сделать.</b> Подушка на 6 месяцев расходов в ликвидных инструментах на имя супруга плюс страховая выплата, которая приходит в течение месяца, закрывают эту дыру.</div>
+    <div class="marks">
+      <button class="mk g" onclick="mark(5,0)">Продержится</button>
+      <button class="mk r" onclick="mark(5,1)">Не продержится или не считал</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Итог</h2>
+    <div class="big" style="margin-bottom:8px">
+      <div class="lbl">Признаков незащищённости</div>
+      <div class="val" id="score">0 / 5</div>
+      <div class="note" id="verdict">Отметьте пять пунктов выше</div>
+    </div>
+    <button class="ghost" onclick="window.print()">Распечатать или сохранить в PDF</button>
+    <button class="ghost" onclick="reset()">Сбросить</button>
+  </div>
+  <div class="card">
+    <h2>Что важно понимать</h2>
+    <div class="line"><span><b>Страховая программа не даёт иммунитета.</b> Право на выкупную сумму можно взыскать через суд, при банкротстве оно входит в конкурсную массу. Она даёт адресность и скорость выплаты семье.</span></div>
+    <div class="line"><span><b>Защита это конструкция,</b> а не один документ: завещание, брачный договор, страховая программа, подушка. Каждый элемент закрывает свою дыру.</span></div>
+    <div class="line"><span><b>Самый дорогой признак — пятый.</b> Семья без денег в те шесть месяцев, когда всё остальное заблокировано.</span></div>
+  </div>
+
+  <div class="cta">
+    <h3>Разбираю защиту капитала без маркетинга</h3>
+    <p>В канале честно: что страховые программы дают на самом деле, а что им приписывают продавцы.</p>
+    <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
+  </div>
+  <div class="foot">Материал носит информационный характер и не является юридической консультацией. Конкретную ситуацию решает конкретный договор.</div>
+</div>
+<script>
+const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
+const f1=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(x);
+const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x);
+const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
+
+const st={};
+function mark(i,v){st[i]=v;
+  const c=document.getElementById('q'+i);
+  const b=c.querySelectorAll('.mk');
+  b[0].classList.toggle('on',v===0);
+  b[1].classList.toggle('on',v===1);
+  upd();}
+function upd(){
+  const vals=Object.values(st);
+  const bad=vals.filter(x=>x===1).length;
+  document.getElementById('score').textContent=bad+' / 5';
+  const v=document.getElementById('verdict');
+  if(vals.length<5){v.textContent='Отмечено '+vals.length+' из 5 пунктов';return;}
+  if(bad===0) v.textContent='Конструкция собрана. Раз в год перепроверяйте выгодоприобретателей и подушку.';
+  else if(bad===1) v.textContent='Одна дыра. Закройте её на этой неделе, это обычно один документ или одно заявление.';
+  else if(bad<=3) v.textContent='Несколько дыр. Начните с выгодоприобретателя и завещания: это быстрее всего и закрывает самое дорогое.';
+  else v.textContent='Капитал не защищён. Семья получит активы, которые нельзя быстро превратить в деньги, и не раньше, чем через полгода. Начните с подушки и выгодоприобретателя.';
+}
+function reset(){for(const k in st)delete st[k];
+  document.querySelectorAll('.mk').forEach(b=>b.classList.remove('on'));upd();}
+
+</script>
+</body>
+</html>
