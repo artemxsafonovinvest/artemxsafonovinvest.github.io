@@ -80,6 +80,8 @@ tr:last-child td{border:none}
       <div><label>Доп. доход НСЖ, %/год <span>не гарантирован</span></label><input id="g" type="text" inputmode="decimal" value="6"></div>
       <div><label>Ставка НДФЛ</label><select id="t"><option value="13">13 %</option><option value="15">15 %</option><option value="18">18 %</option><option value="20">20 %</option><option value="22">22 %</option></select></div>
     </div>
+    <label>Налог на проценты вклада <span>льгота: 1 млн × ключевая ставка, по всем вкладам вместе</span></label>
+    <select id="dt"><option value="13">13 %: на вкладах уже есть подушка, льгота занята</option><option value="0">0 %: других вкладов нет, в пределах льготы</option></select>
     <label>Худший сценарий на году № <span>что получит семья</span></label>
     <input id="k" type="text" inputmode="decimal" value="3">
     <button onclick="calc()">Посчитать</button>
@@ -87,7 +89,7 @@ tr:last-child td{border:none}
 
   <div class="res" id="res">
     <div class="two">
-      <div class="big"><div class="lbl">Вклад через <span id="yy1"></span> лет</div><div class="val" id="dep">—</div><div class="note">ничего не гарантировано</div></div>
+      <div class="big"><div class="lbl">Вклад через <span id="yy1"></span> лет</div><div class="val" id="dep">—</div><div class="note" id="depn">ничего не гарантировано</div></div>
       <div class="big"><div class="lbl">НСЖ через <span id="yy2"></span> лет</div><div class="val" id="nsj">—</div><div class="note" id="nsjn">—</div></div>
     </div>
     <div class="card">
@@ -125,7 +127,7 @@ tr:last-child td{border:none}
     <p>В канале разбираю, где именно теряют на вкладе и на страховой программе, и показываю линейку от 1 000 ₽ в месяц.</p>
     <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
   </div>
-  <div class="foot">Расчёт иллюстративный. Гарантированная сумма, дополнительный доход и опции зависят от условий конкретной программы. Возврат налога по ст. 219.2 НК РФ (вычет на долгосрочные сбережения, с 01.09.2026): лимит 400 000 ₽ взносов в год, общий с ИИС-3, НПФ и ПДС, не больше уплаченного НДФЛ. Не является индивидуальной инвестиционной рекомендацией.</div>
+  <div class="foot">Расчёт иллюстративный. Гарантированная сумма, дополнительный доход и опции зависят от условий конкретной программы. Возврат налога по ст. 219.2 НК РФ (вычет на долгосрочные сбережения, с 01.09.2026): лимит 400 000 ₽ взносов в год, общий с ИИС-3, НПФ и ПДС, не больше уплаченного НДФЛ. Проценты по вкладам облагаются НДФЛ сверх льготы 1 000 000 ₽ × максимальная ключевая ставка года (в 2026 году 160 000 ₽ процентов) по всем вкладам человека; доход НСЖ при доходности ниже ключевой ставки налогом не облагается. Не является индивидуальной инвестиционной рекомендацией.</div>
 </div>
 <script>
 const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
@@ -134,14 +136,15 @@ const f2=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(x)
 const num=(id)=>{const v=parseFloat(String(document.getElementById(id).value).replace(/\s/g,'').replace(',','.'));return isNaN(v)?0:v;};
 
 function fv(m,rate,n){const i=rate/12;return i===0?m*n:m*((Math.pow(1+i,n)-1)/i);}
+function fvt(m,rate,n,tx){let b=0,y=0;for(let j=1;j<=n;j++){const i=b*rate/12;y+=i;b+=i+m;if(j%12===0||j===n){b-=y*tx;y=0;}}return b;}
 function calc(){
-  const m=num('m'),Y=Math.max(1,Math.round(num('y'))),r=num('r')/100,inf=num('inf')/100,g=num('g')/100,t=num('t')/100;
+  const m=num('m'),Y=Math.max(1,Math.round(num('y'))),r=num('r')/100,inf=num('inf')/100,g=num('g')/100,t=num('t')/100,tx=num('dt')/100;
   let k=Math.round(num('k')); if(k<1)k=1; if(k>Y)k=Y;
   if(!m){alert('Введите сумму в месяц');return;}
   const N=12*Y, C=m*N, A=12*m;
-  const dep=fv(m,r,N);
+  const dep=fvt(m,r,N,tx);
   const dreal=dep/Math.pow(1+inf,Y);
-  const rreal=(1+r)/(1+inf)-1;
+  const rreal=(1+r*(1-tx))/(1+inf)-1;
   const acc=g===0?C:A*((Math.pow(1+g,Y)-1)/g);
   const add=acc-C;
   const dedY=Math.min(A,400000)*t, ded=dedY*Y;
@@ -149,6 +152,7 @@ function calc(){
   const SS=m*350; // страховая сумма: 3 500 000 при 10 000 ₽/мес (ориентир для 35 лет)
   document.getElementById('yy1').textContent=Y; document.getElementById('yy2').textContent=Y; document.getElementById('kk').textContent=k;
   document.getElementById('dep').textContent=f(dep)+' ₽';
+  document.getElementById('depn').textContent=tx>0?'после НДФЛ '+f(tx*100)+' % с процентов, ничего не гарантировано':'ничего не гарантировано';
   document.getElementById('nsj').textContent=f(nsj)+' ₽';
   document.getElementById('nsjn').textContent='из них гарантировано '+f(C)+' ₽ + возврат '+f(ded)+' ₽';
   document.getElementById('c').textContent=f(C)+' ₽';
@@ -162,14 +166,14 @@ function calc(){
   if(diff>0){
     v.innerHTML='<div class="warn"><b>При хорошем сценарии вклад приносит на '+f(diff)+' ₽ больше.</b> Это цена защиты: '+f(diff/Y)+' ₽ в год, '+f(diff/N)+' ₽ в месяц. За неё вы покупаете около '+f(SS)+' ₽ для семьи с первого взноса, освобождение от взносов при инвалидности и договор, из которого нельзя выйти по настроению. Стоит ли защита этих денег, решаете вы, но решать нужно, зная цифру.</div>';
   } else {
-    v.innerHTML='<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">При этих допущениях НСЖ обгоняет вклад на '+f(-diff)+' ₽</b> ещё до учёта защиты семьи. Проверьте ставку вклада: если она ниже доп. дохода плюс возврата налога, вклад проигрывает на любом сроке.</div>';
+    v.innerHTML='<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">При этих допущениях НСЖ обгоняет вклад на '+f(-diff)+' ₽</b>. В деньгах один к одному или лучше, а '+f(SS)+' ₽ для семьи с первого взноса, освобождение от взносов при инвалидности и дисциплина договора достаются бесплатно.</div>';
   }
-  const fdep=fv(m,r,12*k); const fnsj=SS;
+  const fdep=fvt(m,r,12*k,tx); const fnsj=SS;
   document.getElementById('fdep').textContent=f(fdep)+' ₽';
   document.getElementById('fnsj').textContent=f(fnsj)+' ₽';
   document.getElementById('fdiff').textContent='в '+f1(fnsj/Math.max(fdep,1))+' раза';
   let rows='';
-  for(let yr=1;yr<=Y;yr++){const d=fv(m,r,12*yr);rows+='<tr'+(yr===k?' style="background:rgba(201,168,76,.12)"':'')+'><td>'+yr+'</td><td>'+f(d)+'</td><td class="r">'+f(d)+'</td><td class="g">'+f(SS)+'</td></tr>';}
+  for(let yr=1;yr<=Y;yr++){const d=fvt(m,r,12*yr,tx);rows+='<tr'+(yr===k?' style="background:rgba(201,168,76,.12)"':'')+'><td>'+yr+'</td><td>'+f(d)+'</td><td class="r">'+f(d)+'</td><td class="g">'+f(SS)+'</td></tr>';}
   document.getElementById('tb').innerHTML=rows;
   document.getElementById('res').classList.add('show');
 }
