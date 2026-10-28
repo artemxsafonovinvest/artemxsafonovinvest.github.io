@@ -104,7 +104,7 @@ tr:last-child td{border:none}
     <div class="card">
       <h2>Худший сценарий: семья на <span id="kk"></span>-м году</h2>
       <div class="line"><span>Вклад: то, что успело накопиться, через 6 месяцев наследства</span><b id="fdep" class="r">—</b></div>
-      <div class="line"><span>НСЖ: страховая сумма выгодоприобретателю, обычно в течение месяца</span><b id="fnsj" class="g">—</b></div>
+      <div class="line"><span>НСЖ: страховая сумма выгодоприобретателю, обычно в течение месяца <span style="color:#6b7280;font-size:12px">ориентир для 35 лет, точная зависит от возраста и здоровья</span></span><b id="fnsj" class="g">—</b></div>
       <div class="line"><span>Разница для семьи</span><b id="fdiff">—</b></div>
       <div class="warn"><b>При потере трудоспособности</b> по большинству программ компания продолжает платить взносы за вас, договор доживает до конца. На вкладе взносы просто прекращаются.</div>
     </div>
@@ -146,6 +146,7 @@ function calc(){
   const add=acc-C;
   const dedY=Math.min(A,400000)*t, ded=dedY*Y;
   const nsj=acc+ded;
+  const SS=m*350; // страховая сумма: 3 500 000 при 10 000 ₽/мес (ориентир для 35 лет)
   document.getElementById('yy1').textContent=Y; document.getElementById('yy2').textContent=Y; document.getElementById('kk').textContent=k;
   document.getElementById('dep').textContent=f(dep)+' ₽';
   document.getElementById('nsj').textContent=f(nsj)+' ₽';
@@ -159,16 +160,16 @@ function calc(){
   document.getElementById('ded').textContent='+'+f(ded)+' ₽ ('+f(dedY)+' ₽ в год)';
   const v=document.getElementById('verd'); const diff=dep-nsj;
   if(diff>0){
-    v.innerHTML='<div class="warn"><b>При хорошем сценарии вклад приносит на '+f(diff)+' ₽ больше.</b> Это цена защиты: '+f(diff/Y)+' ₽ в год, '+f(diff/N)+' ₽ в месяц. За неё вы покупаете '+f(C)+' ₽ для семьи с первого взноса, освобождение от взносов при инвалидности и договор, из которого нельзя выйти по настроению. Стоит ли защита этих денег, решаете вы, но решать нужно, зная цифру.</div>';
+    v.innerHTML='<div class="warn"><b>При хорошем сценарии вклад приносит на '+f(diff)+' ₽ больше.</b> Это цена защиты: '+f(diff/Y)+' ₽ в год, '+f(diff/N)+' ₽ в месяц. За неё вы покупаете около '+f(SS)+' ₽ для семьи с первого взноса, освобождение от взносов при инвалидности и договор, из которого нельзя выйти по настроению. Стоит ли защита этих денег, решаете вы, но решать нужно, зная цифру.</div>';
   } else {
     v.innerHTML='<div class="warn" style="border-color:#059669;background:rgba(5,150,105,.08)"><b style="color:#059669">При этих допущениях НСЖ обгоняет вклад на '+f(-diff)+' ₽</b> ещё до учёта защиты семьи. Проверьте ставку вклада: если она ниже доп. дохода плюс возврата налога, вклад проигрывает на любом сроке.</div>';
   }
-  const fdep=fv(m,r,12*k); const fnsj=C;
+  const fdep=fv(m,r,12*k); const fnsj=SS;
   document.getElementById('fdep').textContent=f(fdep)+' ₽';
   document.getElementById('fnsj').textContent=f(fnsj)+' ₽';
   document.getElementById('fdiff').textContent='в '+f1(fnsj/Math.max(fdep,1))+' раза';
   let rows='';
-  for(let yr=1;yr<=Y;yr++){const d=fv(m,r,12*yr);rows+='<tr'+(yr===k?' style="background:rgba(201,168,76,.12)"':'')+'><td>'+yr+'</td><td>'+f(d)+'</td><td class="r">'+f(d)+'</td><td class="g">'+f(C)+'</td></tr>';}
+  for(let yr=1;yr<=Y;yr++){const d=fv(m,r,12*yr);rows+='<tr'+(yr===k?' style="background:rgba(201,168,76,.12)"':'')+'><td>'+yr+'</td><td>'+f(d)+'</td><td class="r">'+f(d)+'</td><td class="g">'+f(SS)+'</td></tr>';}
   document.getElementById('tb').innerHTML=rows;
   document.getElementById('res').classList.add('show');
 }
