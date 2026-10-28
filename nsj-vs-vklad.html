@@ -125,7 +125,7 @@ tr:last-child td{border:none}
     <p>В канале разбираю, где именно теряют на вкладе и на страховой программе, и показываю линейку от 1 000 ₽ в месяц.</p>
     <a href="https://t.me/artemsafonovblog">Перейти в канал →</a>
   </div>
-  <div class="foot">Расчёт иллюстративный. Гарантированная сумма, дополнительный доход и опции зависят от условий конкретной программы. Возврат налога по ст. 219 НК РФ: лимит 150 000 ₽ взносов в год, не больше уплаченного НДФЛ. Не является индивидуальной инвестиционной рекомендацией.</div>
+  <div class="foot">Расчёт иллюстративный. Гарантированная сумма, дополнительный доход и опции зависят от условий конкретной программы. Возврат налога по ст. 219.2 НК РФ (вычет на долгосрочные сбережения, с 01.09.2026): лимит 400 000 ₽ взносов в год, общий с ИИС-3, НПФ и ПДС, не больше уплаченного НДФЛ. Не является индивидуальной инвестиционной рекомендацией.</div>
 </div>
 <script>
 const f=(x)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(x));
@@ -144,7 +144,7 @@ function calc(){
   const rreal=(1+r)/(1+inf)-1;
   const acc=g===0?C:A*((Math.pow(1+g,Y)-1)/g);
   const add=acc-C;
-  const dedY=Math.min(A,150000)*t, ded=dedY*Y;
+  const dedY=Math.min(A,400000)*t, ded=dedY*Y;
   const nsj=acc+ded;
   document.getElementById('yy1').textContent=Y; document.getElementById('yy2').textContent=Y; document.getElementById('kk').textContent=k;
   document.getElementById('dep').textContent=f(dep)+' ₽';
